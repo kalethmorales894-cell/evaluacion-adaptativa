@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Evaluación Adaptativa Escolar</title>
+    
+    <meta name="description" content="Plataforma interactiva de diagnóstico escolar y orientación vocacional. Evalúa tus conocimientos de forma adaptativa por asignaturas.">
+    <meta name="robots" content="index, follow">
+
     <style>
         * { 
             box-sizing: border-box; 
@@ -30,7 +34,6 @@
             background: #0f172a;
         }
 
-        /* CANVAS PARA EL FONDO ANIMADO DE ICONOS Y FÓRMULAS */
         #fondo-animado {
             position: fixed;
             top: 0;
@@ -38,10 +41,9 @@
             width: 100vw;
             height: 100vh;
             z-index: 1;
-            pointer-events: none; /* No interfiere con los clics del usuario */
+            pointer-events: none;
         }
 
-        /* DISEÑO ADAPTATIVO AVANZADO PARA PC (VENTANA COMPLETA O ENCOGIDA) Y CELULARES */
         .panel {
             position: relative;
             z-index: 10;
@@ -61,7 +63,6 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        /* Optimización de barras de desplazamiento internas */
         .panel::-webkit-scrollbar {
             width: 6px;
         }
@@ -259,10 +260,6 @@
                 <label><input type="checkbox" name="m-sel" value="Matemáticas"> Matemáticas</label>
                 <label><input type="checkbox" name="m-sel" value="Español"> Español</label>
                 <label><input type="checkbox" name="m-sel" value="Sociales"> Sociales</label>
-                <label><input type="checkbox" name="m-sel" value="Estadística"> Estadística</label>
-                <label><input type="checkbox" name="m-sel" value="Religión"> Religión</label>
-                <label><input type="checkbox" name="m-sel" value="Filosofía"> Filosofía</label>
-                <label><input type="checkbox" name="m-sel" value="Educación Física"> Educación Física</label>
                 <label><input type="checkbox" id="chk-cc" onchange="toggleCubiculo()"> 🧪 Ciencias Naturales</label>
             </div>
             <div id="sub-cc" class="sub-bloque">
@@ -284,7 +281,7 @@
     <div id="p3" class="panel" style="display: none;">
         <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold; font-size: 0.85rem;">
             <span id="txt-materia-act">Materia</span>
-            <span id="txt-progreso-act">Pregunta 0/15</span>
+            <span id="txt-progreso-act">Pregunta 0/5</span>
         </div>
         <div id="lectura-contexto" class="texto-guia"></div>
         <p id="enunciado-pregunta" style="font-size:1.05rem; font-weight:600; text-align:left; margin-bottom: 15px;"></p>
@@ -309,24 +306,19 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE ELEMENTOS GRÁFICOS Y VARIABLES SIMBÓLICAS PARA CANVAS ANIMADO
         const CANVAS = document.getElementById("fondo-animado");
         const CTX = CANVAS.getContext("2d");
         let particulas = [];
-        let modoFondoActual = "CONJUNTO"; // Almacena el filtro activo ("CONJUNTO", "INFORMÁTICA", etc.)
+        let modoFondoActual = "CONJUNTO";
 
         const SIMBOLOS_MATERIAS = {
-            "Informática": ["#!/bin", "⚡", "💻", "🐧", "⚙️", "[_]", "0110", "<u>", "{}", "kali", "⌥", "⌨️"],
-            "Matemáticas": ["f(x)", "∑", "√x", "π", "∞", "+/-", "x²", "∆", "∫", "α", "β", "y=mx"],
-            "Español": ["A-Z", "«»", "¶", "📖", "Aa", "✒️", "✍️", "📜", "Contexto", "Sintaxis", "Verbo"],
-            "Sociales": ["🗺️", "🌍", "🏛️", "⚖️", "1789", "Siglo", "Soberanía", "📜", "Paz", "Ecuador"],
-            "Estadística": ["μ", "σ²", "P(X)", "📊", "N(0,1)", "∑x", "Z-score", "📉", "Muestra", "f_i"],
-            "Religión": ["📜", "🕊️", "⛪", "☪", "🕉", "✡", "Fe", "Valores", "Moral", "Samaritano"],
-            "Filosofía": ["Logos", "🤔", "Cogito", "Mito", "Duda", "Saber", "Esencia", "🔥", "📜", "Axioma"],
-            "Educación Física": ["🏃", "⏱️", "💪", "👟", "H2O", "BPM", "IMC", "📈", "Carga", "Pulso"],
-            "Física": ["E=mc²", "v=d/t", "F=ma", "⚛️", "C*", "λ", "Ω", "Coulomb", "Joules", "W", "🚀"],
-            "Química": ["H2O", "NaCl", "HCl", "pH", "🧪", "⚛️", "Mol", "sp³", "O2", "C", "CO2", "NaOH"],
-            "Biología": ["ADN", "🧫", "🔬", "🌿", "Cell", "RNA", "Fungi", "♻️", "Bio", "Mitocondria"]
+            "Informática": ["💻", "⚙️", "0110", "{}", "kali", "⌨️"],
+            "Matemáticas": ["∑", "√x", "π", "∞", "x²", "∫"],
+            "Español": ["📖", "Aa", "✒️", "✍️", "📜"],
+            "Sociales": ["🗺️", "🌍", "🏛️", "⚖️"],
+            "Física": ["E=mc²", "v=d/t", "F=ma", "⚛️", "Ω"],
+            "Química": ["H2O", "NaCl", "HCl", "pH", "🧪"],
+            "Biología": ["ADN", "🧫", "🔬", "🌿", "Cell"]
         };
 
         const GRADIENTES_FONDO = {
@@ -335,10 +327,6 @@
             "MATEMÁTICAS": ["#2e1405", "#662203", "#140700"],
             "ESPAÑOL": ["#2b1b04", "#5c3a07", "#170e01"],
             "SOCIALES": ["#1c1917", "#3f3f46", "#0c0a09"],
-            "ESTADÍSTICA": ["#042f2e", "#115e59", "#021414"],
-            "RELIGIÓN": ["#064e3b", "#065f46", "#022c22"],
-            "FILOSOFÍA": ["#1e1b4b", "#2e2a72", "#0f0e26"],
-            "EDUCACIÓN FÍSICA": ["#4c0519", "#881337", "#27010c"],
             "FÍSICA": ["#0c4a6e", "#0369a1", "#042f44"],
             "QUÍMICA": ["#064e3b", "#0f766e", "#042f2e"],
             "BIOLOGÍA": ["#052e16", "#14532d", "#02170b"]
@@ -356,12 +344,10 @@
                 this.rotation = Math.random() * Math.PI;
                 this.rotSpeed = (Math.random() - 0.5) * 0.01;
             }
-
             actualizar() {
                 this.x += this.speedX;
                 this.y += this.speedY;
                 this.rotation += this.rotSpeed;
-
                 if (this.x < -50) this.x = CANVAS.width + 50;
                 if (this.x > CANVAS.width + 50) this.x = -50;
                 if (this.y < -50) {
@@ -369,7 +355,6 @@
                     this.x = Math.random() * CANVAS.width;
                 }
             }
-
             dibujar() {
                 CTX.save();
                 CTX.translate(this.x, this.y);
@@ -393,15 +378,10 @@
             let fx = 0.8, fy = 1.2;
 
             if (modoFondoActual === "CONJUNTO") {
-                Object.values(SIMBOLOS_MATERIAS).forEach(arr => {
-                    poolSimbolos = poolSimbolos.concat(arr);
-                });
+                Object.values(SIMBOLOS_MATERIAS).forEach(arr => { poolSimbolos = poolSimbolos.concat(arr); });
                 fx = 0.9; fy = 1.0;
             } else {
                 poolSimbolos = SIMBOLOS_MATERIAS[modoFondoActual] || ["?"];
-                // Velocidades sutilmente diferenciadas según asignatura
-                if (modoFondoActual === "Informática" || modoFondoActual === "Física") { fx = 1.3; fy = 1.6; }
-                if (modoFondoActual === "Filosofía" || modoFondoActual === "Religión") { fx = 0.4; fy = 0.6; }
             }
 
             let totalParticulas = Math.min(65, Math.floor((CANVAS.width * CANVAS.height) / 18000));
@@ -410,15 +390,13 @@
             for (let i = 0; i < totalParticulas; i++) {
                 let ranSimbolo = poolSimbolos[Math.floor(Math.random() * poolSimbolos.length)];
                 let p = new ParticulaSimbolo(ranSimbolo, fx, fy);
-                p.y = Math.random() * CANVAS.height; // Distribución inicial uniforme
+                p.y = Math.random() * CANVAS.height;
                 particulas.push(p);
             }
         }
 
         function bucleAnimacionFondo() {
             CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
-            
-            // Dibujado del Gradiente correspondiente
             let claveGrad = modoFondoActual === "CONJUNTO" ? "CONJUNTO" : modoFondoActual.toUpperCase().replace(/\s+/g, '');
             let colores = GRADIENTES_FONDO[claveGrad] || GRADIENTES_FONDO["CONJUNTO"];
             
@@ -429,7 +407,6 @@
             CTX.fillStyle = grad;
             CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
 
-            // Actualización y renderizado de partículas vectoriales en movimiento
             for (let i = 0; i < particulas.length; i++) {
                 particulas[i].actualizar();
                 particulas[i].dibujar();
@@ -448,99 +425,77 @@
             reestatizarFondoParticulas();
         }
 
-        // BANCO DE PREGUNTAS TOTALMENTE ÚNICAS SIN COMPONENTES DUPLICADOS
-        const bancoMaestro = {};
-        const asignaturasLista = ["Informática", "Matemáticas", "Español", "Sociales", "Estadística", "Religión", "Filosofía", "Educación Física", "Física", "Química", "Biología"];
-        
-        const conceptosPorMateria = {
+        // NUEVO BANCO DE PREGUNTAS DINÁMICAS, VARIADAS Y SIN TEXTOS SIVILINOS DELATADORES
+        const bancoMaestro = {
             "Informática": {
-                1: ["el periférico básico", "la pantalla o monitor", "el mouse señalador", "el teclado físico", "la CPU central", "la impresora de inyección", "el puerto USB físico", "el gabinete externo", "el cable de red local", "el disco duro sólido", "la memoria de lectura", "la fuente reguladora", "los parlantes de audio", "el software utilitario", "la unidad de discos"],
-                2: ["el kernel del sistema", "la memoria RAM dinámica", "la dirección IP lógica", "el switch de distribución", "el navegador de internet", "el sistema de archivos", "la interfaz de comandos", "el controlador de dispositivo", "el protocolo HTTP web", "la red LAN local", "el firewall perimetral", "la compresión de datos", "el software libre Linux", "la memoria caché interna", "el proceso en segundo plano"],
-                3: ["las consultas SQL indexadas", "las variables enteras locales", "el bucle iterativo While", "los arreglos dinámicos indexados", "las funciones de retorno", "las tablas relacionales ligadas", "la herencia de objetos", "los condicionales anidados", "la lógica booleana estricta", "los algoritmos de ordenamiento", "las llaves primarias únicas", "el tipado estricto de datos", "la sintaxis limpia de código", "la depuración de errores", "las API de conexión externa"],
-                4: ["la criptografía asimétrica", "las llaves privadas SSH", "el hipervisor tipo 1", "los contenedores Docker aislados", "los ataques de denegación", "las firmas hash SHA256", "la computación en la nube", "la auditoría de penetración", "los certificados SSL TLS", "la inyección de dependencias", "los balanceadores de carga", "la redundancia de servidores", "los hilos de ejecución", "la memoria swap crítica", "la replicación de clústeres"]
+                1: [
+                    { t: "Arquitectura Física de Sistemas", q: "¿Cuál de los siguientes componentes se considera el 'cerebro' físico de una computadora, encargado de ejecutar las instrucciones de los programas?", a: "La memoria RAM estática", b: "La Unidad Central de Procesamiento (CPU)", c: "El disco de estado sólido (SSD)", d: "La tarjeta madre o placa base", cta: "B" },
+                    { t: "Herramientas de Ofimática", q: "¿Qué es Microsoft Word dentro del ecosistema informático estándar?", a: "Un sistema operativo de código abierto", b: "Un gestor de bases de datos relacionales", c: "Un software procesador de textos", d: "Un navegador web de alta velocidad", cta: "C" },
+                    { t: "Estructuras de la Red", q: "¿Qué es un directorio web en el ámbito del internet?", a: "Una base de datos que organiza enlaces de sitios web por categorías", b: "Un cable físico submarino de fibra óptica", c: "Un comando de consola para borrar archivos", d: "Un protocolo de asignación de direcciones IP", cta: "A" },
+                    { t: "Almacenamiento de Datos", q: "¿Qué tipo de memoria pierde toda su información guardada inmediatamente al apagar el equipo informático?", a: "Memoria ROM", b: "Disco Duro Mecánico", c: "Memoria RAM", d: "Memoria Flash USB", cta: "C" },
+                    { t: "Sistemas Operativos", q: "¿Cuál es la función principal del Kernel o núcleo en un sistema operativo como Linux o Windows?", a: "Diseñar las interfaces gráficas y las ventanas", b: "Administrar los recursos de hardware y la comunicación con el software", c: "Escanear y eliminar virus informáticos", d: "Optimizar la velocidad de la navegación web", cta: "B" }
+                ]
             },
             "Matemáticas": {
-                1: ["la suma de sumandos", "la resta o diferencia", "los números naturales", "el conteo de elementos", "el valor absoluto base", "la adición de unidades", "la decena agrupada", "la recta numérica real", "la cantidad equivalente", "el orden mayor que", "los dígitos primarios", "la operation aritmética", "el resultado exacto", "la agrupación lógica", "la de-composición básica"],
-                2: ["las fracciones homogéneas", "los números primos puros", "el mínimo común mcm", "la división con residuo", "los decimales exactos", "el numerador de fracción", "los múltiplos de un número", "la simplificación al mínimo", "la razón de proporcionalidad", "los números enteros mixtos", "la amplificación racional", "la propiedad distributiva", "el divisor común máximo", "el porcentaje decimal", "la regla de tres simple"],
-                3: ["el despeje de ecuaciones", "el Teorema de Pitágoras", "los sistemas lineales 2x2", "el cateto opuesto del ángulo", "la incógnita de primer grado", "los polinomios factorizados", "los productos notables base", "la pendiente de la recta", "la parábola cuadrática", "la igualación de términos", "el método de sustitución", "la hipotenusa del triángulo", "la factorización por agrupación", "la función lineal directa", "el plano cartesiano ordenado"],
-                4: ["la derivada de la función", "el límite indeterminado 0/0", "el determinante de la matriz", "la integral definida estándar", "los vectores ortogonales", "las matrices cuadradas 3x3", "la regla de la cadena", "las series de potencias", "las ecuaciones diferenciales", "la continuidad de la curva", "el espacio vectorial real", "la matriz transpuesta", "la derivada parcial implícita", "los autovalores del sistema", "la optimización de funciones"]
+                1: [
+                    { t: "Operaciones Aritméticas", q: "Si sumas 3/4 con 1/2, ¿cuál es el resultado simplificado de la operación?", a: "4/6", b: "5/4", c: "1", d: "3/8", cta: "B" },
+                    { t: "Ecuaciones Lineales", q: "En la ecuación matemática elemental 2x - 5 = 11, ¿cuál es el valor numérico real de la variable x?", a: "x = 3", b: "x = 6", c: "x = 8", d: "x = 16", cta: "C" },
+                    { t: "Geometría Plana", q: "¿Cómo se calcula el área total de un triángulo rectángulo en el plano?", a: "Multiplicando la base por la altura", b: "Sumando sus tres lados y dividiendo entre dos", c: "Multiplicando la base por la altura y dividiendo el resultado entre dos", d: "Elevando el valor del lado mayor al cuadrado", cta: "C" },
+                    { t: "Teoría de Números", q: "¿Cuál de los siguientes números se clasifica estrictamente como un número primo?", a: "9", b: "15", c: "2", d: "4", cta: "C" },
+                    { t: "Fracciones y Razones", q: "¿A qué porcentaje equivale exactamente la fracción decimal de 1/5?", a: "15%", b: "50%", c: "5%", d: "20%", cta: "D" }
+                ]
             },
             "Español": {
-                1: ["el sustantivo común", "el sinónimo del vocablo", "el adjetivo calificativo", "el punto final del párrafo", "las vocales abiertas", "el sujeto de la oración", "el antónimo de la palabra", "la sílaba tónica fuerte", "el abecedario ordenado", "el género femenino/masculino", "el número plural/singular", "el artículo definido", "la letra mayúscula inicial", "la lectura comprensiva", "la palabra monosílaba"],
-                2: ["la palabra grave o llana", "el prefijo derivativo", "las palabras agudas con tilde", "el hiato de vocales", "el diptongo fonético", "las palabras esdrújulas siempre", "el sufijo aumentativo", "la sílaba penúltima acentuada", "el prefijo de negación", "la raíz léxica invariable", "el uso de la grafía B/V", "la tilde diacrítica especial", "el enunciado exclamativo", "el conector de adición", "el significado denotativo"],
-                3: ["el núcleo del sujeto", "la metáfora poética", "el predicado verbal amplio", "el símil o comparación", "el complemento directo explícito", "la hipérbole exagerada", "la personificación del objeto", "la oración subordinada", "la concordancia gramatical", "el modo subjuntivo del verbo", "el nexo de subordinación", "la estructura bimembre", "la voz pasiva analítica", "el dequeísmo ortográfico", "la anáfora repetitiva"],
-                4: ["el vanguardismo literario", "el caligrama geométrico", "el ensayo argumentativo", "la tesis del escrito", "la contraargumentación dialéctica", "la literatura del Boom Latinoamericano", "el realismo mágico descriptivo", "la cohesión intertextual", "la falacia argumentativa informal", "el marco teórico referencial", "la estructura de la epopeya", "el neoclasicismo estricto", "la polifonía en el texto", "la intertextualidad crítica", "el silogismo retórico"]
+                1: [
+                    { t: "Lingüística y Fonética", q: "¿Cómo se definen las palabras homófonas en nuestro idioma?", a: "Palabras que se escriben igual pero tienen significados opuestos", b: "Palabras que suenan exactamente igual pero tienen diferente escritura y significado", c: "Palabras que expresan sentimientos de manera exagerada", d: "Palabras que modifican directamente la acción del verbo", cta: "B" },
+                    { t: "Ortografía General", q: "¿Cuál de las siguientes palabras está escrita con la acentuación ortográfica correcta según las reglas de las palabras agudas?", a: "Cancion", b: "Árbol", c: "Canción", d: "Mesa", cta: "C" },
+                    { t: "Géneros Literarios", q: "Un texto escrito en prosa, de gran extensión, que narra historias complejas con personajes y tramas cruzadas es:", a: "Un poema lírico", b: "Una novela", c: "Un ensayo científico", d: "Una fábula corta", cta: "B" },
+                    { t: "Semántica", q: "¿Cuál es el antónimo directo y exacto de la palabra 'Efímero'?", a: "Breve", b: "Pasajero", c: "Duradero", d: "Débil", cta: "C" },
+                    { t: "Sintaxis de la Oración", q: "En la oración 'El viejo reloj de la torre suena fuerte', ¿cuál es el núcleo del sujeto?", a: "Viejo", b: "Torre", c: "Suena", d: "Reloj", cta: "D" }
+                ]
             },
             "Sociales": {
-                1: ["la capital del país", "la línea del Ecuador", "el mapa geográfico", "los puntos cardinales", "el relieve montañoso", "el océano pacífico", "el límite fronterizo", "la bandera patria", "el territorio nacional", "el departamento local", "la zona costera", "el clima cálido", "los recursos naturales", "el plano urbano", "la diversidad cultural"],
-                2: ["el año del descubrimiento 1492", "la escritura jeroglífica egipcia", "las civilizaciones fluviales antiguas", "el imperio romano clásico", "el feudalismo de la edad media", "las rutas de la seda comerciales", "el nomadismo prehistórico", "la agricultura del neolítico", "la mitología griega clásica", "el trueque de mercancías", "la caída de Constantinopla", "el legado cultural azteca", "la civilización incaica andina", "los canales de Mesopotamia", "el código de Hammurabi"],
-                3: ["la toma de la Bastilla 1789", "la rama legislativa del poder", "la revolución francesa burguesa", "la constitución política nacional", "los derechos humanos ciudadanos", "la revolución industrial textil", "el capitalismo de mercado", "la monarquía absolutista rota", "la división de poderes estatales", "el sufragio universal libre", "la soberanía popular directa", "los mecanismos de participación", "el control constitucional judicial", "los partidos políticos tradicionales", "el congreso de la república"],
-                4: ["el Pacto de Varsovia bipolar", "la Organización Mundial del Comercio", "la Guerra Fría ideológica", "la globalización económica contemporánea", "el neoliberalismo financiero", "la crisis de los misiles 1962", "la deslocalización de la industria", "los tratados de libre comercio", "la caída del bloque soviético", "la hegemonía geopolítica mundial", "los organismos multilaterales ONU", "la inflación macroeconómica estructural", "los flujos migratorios globales", "la geopolítica de los hidrocarburos", "los conflictos de la posguerra"]
-            },
-            "Estadística": {
-                1: ["la suma para el promedio", "el gráfico de barras", "la altura de la barra", "la recolección de datos", "la encuesta directa", "el conteo de respuestas", "la tabla de datos simple", "la variable cualitativa", "el total de la muestra", "el valor más alto", "la representación visual", "la lista de datos ordenados", "el indicador cuantitativo", "la categoría evaluada", "el registro numérico"],
-                2: ["el valor de la mediana", "la moda de la distribución", "el conjunto muestral cerrado", "la media aritmética promedio", "la frecuencia absoluta acumulada", "el dato central posicional", "la frecuencia relativa porcentual", "el sesgo de los datos", "el intervalo de clase agrupado", "la marca de clase intermedia", "el histograma de frecuencias", "la muestra representativa aleatoria", "el universo de la población", "la variable cuantitativa discreta", "la distribución simétrica"],
-                3: ["la desviación estándar medida", "el rango total calculado", "la varianza de la muestra", "el coeficiente de variación relativo", "el rango intercuartílico modular", "la desviación media absoluta", "los cuartiles de la distribución", "el diagrama de caja y bigotes", "la asimetría de la muestra", "la curtosis de la curva", "el error estándar estimado", "la covarianza bidimensional", "la recta de regresión lineal", "el coeficiente de correlación R", "la dispersión de los residuos"],
-                4: ["el Teorema de Bayes condicional", "la distribución normal estándar Z", "la probabilidad de eventos independientes", "la campana de Gauss simétrica", "la prueba de hipótesis nula", "el nivel de significancia alfa", "el valor p crítico calculado", "la distribución t de Student", "el teorema del límite central", "la regresión logística multivariada", "el intervalo de confianza estimado", "la variabilidad entre grupos ANOVA", "el estadístico Chi-cuadrado ajustado", "el muestreo estratificado proporcional", "la función de densidad probabilística"]
-            },
-            "Religión": {
-                1: ["el compendio de la Biblia", "el nacimiento del niño Jesús", "los libros sagrados antiguos", "la festividad de la Navidad", "la oración matutina comunitaria", "el templo de oración", "el respeto al prójimo", "las historias de fe", "la creación del mundo", "los valores espirituales", "la iglesia comunitaria", "la parábola del buen samaritano", "los mandamientos morales", "el amor a Dios", "la tradición familiar religiosa"],
-                2: ["el libro sagrado del Corán", "el monoteísmo estricto del Islam", "la corriente espiritual del Hinduismo", "las revelaciones del profeta Mahoma", "el ayuno del Ramadán sagrado", "las cinco oraciones diarias", "el politeísmo védico original", "la mezquita de oración musulmana", "la tradición oral abrahámica", "el concepto del pecado original", "la Alianza del Antiguo Testamento", "la diáspora judía histórica", "los ritos de iniciación sagrados", "la deidad creadora suprema", "el monacato medieval histórico"],
-                3: ["el estado de liberación Nirvana", "la Torá y el Pentateuco hebreo", "la extinción del sufrimiento budista", "los primeros cinco libros sagrados", "el ciclo de reencarnaciones Samsara", "las Cuatro Nobles Verdades", "el Noble Camino Óctuple", "el Karma como ley de causa", "el Talmud de comentarios jurídicos", "la sinagoga como centro de estudio", "el Shabat de descanso sagrado", "el desapego material meditativo", "la iluminación del Buda histórico", "el templo de Jerusalén antiguo", "la corriente mística de la Cábala"],
-                4: ["el Concilio Vaticano II histórico", "la Teología de la Liberación social", "el movimiento del Ecumenismo cristiano", "la opción preferencial por los pobres", "el diálogo interreligioso global", "la encíclica papal modernizadora", "la reforma protestante de Lutero", "la contrarreforma del Concilio de Trento", "la secularización del mundo moderno", "la hermenéutica bíblica contextual", "la justicia social comunitaria", "los derechos humanos y la fe", "el cisma de Oriente e Occidente", "la patrística de san Agustín", "la escolástica de santo Tomás"]
-            },
-            "Filosofía": {
-                1: ["el amor a la sabiduría", "el mito y la explicación", "el paso al logos racional", "la pregunta existencial básica", "el asombro ante la naturaleza", "la búsqueda de la verdad", "el pensamiento reflexivo libre", "el cuestionamiento del dogma", "los filósofos de la antigüedad", "la duda como punto de partida", "la razón humana natural", "el saber crítico reflexivo", "el sentido de la existencia", "el origen de las cosas", "el diálogo de ideas"],
-                2: ["el método de la mayéutica", "la teoría de las ideas platónicas", "el diálogo inductivo socrático", "el mundo sensible material", "el reino inteligible eterno", "el mito de la caverna alegórico", "la partera de almas intelectual", "el dualismo ontológico radical", "las esencias inmutables eternas", "el filósofo rey gobernante", "la academia de Atenas clásica", "el intelectualismo moral socrático", "la definición universal buscada", "la anamnesis o reminiscencia", "las sombras de la caverna"],
-                3: ["el racionalismo de René Descartes", "el axioma del cogito ergo sum", "la tabula rasa del empirismo", "las ideas innatas rechazadas", "la duda metódica radical", "el empirismo de John Locke y Hume", "la experiencia sensible directa", "el examen del entendimiento humano", "el escepticismo radical de Hume", "la sustancia cartesiana pensante", "el criterio de la verdad evidente", "las impresiones sensibles vivas", "el origen de los conceptos", "la crítica de la razón pura", "el giro copernicano kantiano"],
-                4: ["la existencia precede a la esencia", "el existencialismo de Jean-Paul Sartre", "el criterio de falsabilidad popperiano", "la angustia de la libertad radical", "el absurdo de la condición humana", "la de-marcación de la ciencia de Popper", "el paradigma de las revoluciones de Kuhn", "la voluntad de poder nietzscheana", "la deconstrucción del lenguaje actual", "el biopoder examinado por Foucault", "la ética de la responsabilidad contemporánea", "la teoría crítica de la sociedad", "la fenomenología del espíritu", "la muerte de Dios de Nietzsche", "el giro lingüístico del siglo XX"]
-            },
-            "Educación Física": {
-                1: ["el calentamiento osteomuscular preventivo", "el consumo de agua pura", "la hidratación durante el ejercicio", "la prevención de lesiones musculares", "la movilidad articular suave", "la elevación de la frecuencia cardíaca", "los estiramientos musculares iniciales", "la coordinación motriz básica", "el juego recreativo activo", "el trote continuo suave", "el calzado deportivo adecuado", "el descanso post-esfuerzo indispensable", "la respiración rítmica controlada", "los hábitos de vida saludables", "la postura corporal recta"],
-                2: ["la fuerza muscular contra resistencia", "el ejercicio aeróbico prolongado", "las capacidades físicas condicionales", "la resistencia cardiovascular sostenida", "la aptitud del sistema pulmonar", "la velocidad de reacción motriz", "las contracciones musculares repetidas", "la flexibilidad articular dinámica", "el test de aptitud física base", "la quema de glucosa energética", "el volumen de oxígeno utilizado", "el entrenamiento de baja intensidad", "el acondicionamiento físico general", "los movimientos coordinativos complejos", "la agilidad en los desplazamientos"],
-                3: ["la toma del pulso radial", "el estiramiento estático sostenido", "la frecuencia cardíaca en reposo", "la elasticidad de los tendones", "los rangos articulares amplios", "la monitorización del pulso carotídeo", "la intensidad de la carga evaluada", "el método de entrenamiento continuo", "el Fartlek de cambios de ritmo", "la zona de entrenamiento aeróbico", "la fatiga muscular acumulada", "la recuperación cardíaca post-esfuerzo", "el índice de masa corporal IMC", "la pliometría de saltos dinámicos", "la capacidad anaeróbica láctica inicial"],
-                4: ["el principio de sobrecarga progresiva", "el exceso de ácido láctico acumulado", "la fatiga y el ardor muscular", "el metabolismo anaeróbico láctico exclusivo", "la planificación en macrociclos deportivos", "el microciclo de entrenamiento structured", "el estímulo adaptativo de carga", "la degradación de glucógeno anaeróbico", "la fosfocreatina muscular de potencia", "el principio de especificidad deportiva", "la supercompensación del organismo post-entreno", "el umbral anaeróbico ventilatorio", "la hipertrofia muscular buscada", "la capacidad láctica de resistencia extrema", "el sobreentrenamiento crónico evitado"]
+                1: [
+                    { t: "Geografía Política", q: "¿Cuál es la línea imaginaria horizontal que divide la Tierra exactamente en el Hemisferio Norte y Hemisferio Sur?", a: "El Meridiano de Greenwich", b: "El Trópico de Cáncer", c: "La Línea del Ecuador", d: "El Círculo Polar Ártico", cta: "C" },
+                    { t: "Historia Universal", q: "¿En qué año se dio inicio formal a la Revolución Francesa, hito histórico que cambió los derechos políticos de la humanidad?", a: "1492", b: "1789", c: "1810", d: "1914", cta: "B" },
+                    { t: "Demografía Global", q: "¿Cuál es el continente más poblado de todo el planeta Tierra?", a: "América", b: "África", c: "Asia", d: "Europa", cta: "C" },
+                    { t: "Organización Política", q: "¿Qué nombre recibe el sistema de gobierno donde el poder político reside en el pueblo y se ejerce mediante el voto?", a: "Monarquía Absoluta", b: "Oligarquía", c: "Dictadura Militar", d: "Democracia", cta: "D" },
+                    { t: "Geografía de Relieves", q: "¿Cuál es la cordillera montañosa más larga de todo el mundo, ubicada en Sudamérica?", a: "Los Alpes", b: "El Himalaya", c: "Los Andes", d: "Las Montañas Rocosas", cta: "C" }
+                ]
             },
             "Física": {
-                1: ["la distancia y el tiempo uniforme", "el metro como unidad fundamental", "la cinemática del movimiento sólido", "la velocidad constante rectilínea", "el trayecto lineal del cuerpo", "las magnitudes físicas primarias", "el Sistema Internacional de Unidades", "la medición de la longitud", "el cronómetro de precisión temporal", "el desplazamiento escalar neto", "la trayectoria recorrida exacta", "el cambio de posición relativo", "el marco de referencia espacial", "la física como ciencia natural", "la rapidez promedio calculada"],
-                2: ["la tercera ley de Newton acción-reacción", "la energía potencial gravitatoria de altura", "la fuerza opuesta simétrica resultante", "las leyes de la dinámica clásica", "la energía mecánica del sistema", "la masa inercial del objeto", "la aceleración constante de la gravedad", "la primera ley de Newton o inercia", "la segunda ley de Newton fuerza-masa", "el trabajo mecánico de la fuerza", "la energía cinética del movimiento", "la conservación de la energía total", "la fricción disipativa del plano", "el vector de fuerza neta", "el vatio como unidad de potencia"],
-                3: ["la primera ley de la termodinámica conservación", "la reducción de la fuerza electrostática", "la ley de Coulomb de cargas", "las cargas puntuales fijas en el espacio", "la segunda ley de la termodinámica entropía", "la transferencia de calor térmica", "la distancia entre las cargas duplicada", "el campo eléctrico circundante", "la constante electrostática del medio", "la diferencia de potencial o voltaje", "la ley de Ohm en circuitos", "la resistencia eléctrica del conductor", "el ciclo térmico reversible ideal", "la energía interna del gas", "la fuerza de atracción electrostática"],
-                4: ["la velocidad de la luz en el vacío", "el principio de incertidumbre de Heisenberg", "la relatividad especial de Einstein 1905", "la imposibilidad de medir posición-momento", "la mecánica cuántica a escala atómica", "el colapso de la función de onda", "la dilatación temporal del observador", "la contracción de la longitud relativista", "el efecto fotoeléctrico cuántico", "la dualidad onda-partícula del fotón", "la equivalencia masa-energía E=mc²", "el espín del electrón cuántico", "el entrelazamiento cuántico de partículas", "la ecuación de onda de Schrödinger", "el cuanto de energía elemental"]
+                1: [
+                    { t: "Cinemática Elemental", q: "Si un automóvil avanza a una velocidad constante de 60 km/h durante un tiempo de 2 horas, ¿qué distancia total recorrió?", a: "30 kilómetros", b: "120 kilómetros", c: "62 kilómetros", d: "180 kilómetros", cta: "B" },
+                    { t: "Dinámica Clásica", q: "Según la Segunda Ley de Newton, si aumentamos la fuerza neta aplicada sobre un objeto manteniendo su masa constante, ¿qué sucede?", a: "La aceleración del objeto aumenta de forma proporcional", b: "La masa del objeto disminuye de inmediato", c: "El objeto se detiene instantáneamente", d: "La energía potencial se vuelve cero", cta: "A" },
+                    { t: "Termodinámica", q: "¿Cuál es el mecanismo de transferencia de calor que ocurre sin necesidad de contacto físico ni un medio material, como el calor que nos llega del Sol?", a: "Conducción", b: "Convección", c: "Radiación", d: "Fusión", cta: "C" },
+                    { t: "Estados de la Materia", q: "¿Qué cambio de estado físico ocurre cuando una sustancia pasa directamente de estado sólido a estado gaseoso sin pasar por el líquido?", a: "Evaporación", b: "Sublimación", c: "Condensación", d: "Solidificación", cta: "B" },
+                    { t: "Óptica y Ondas", q: "¿Qué fenómeno de la luz ocurre cuando un rayo choca contra un espejo y regresa al mismo medio cambiando su dirección?", a: "Refracción", b: "Reflexión", c: "Difracción", d: "Dispersión", cta: "B" }
+                ]
             },
             "Química": {
-                1: ["el estado sólido de forma fija", "la sublimación directa a gas", "la materia y sus estructuras elementales", "los cambios de estado físico térmicos", "el volumen definido del sólido", "la fusión del hielo a líquido", "la evaporación del fluido acuoso", "la condensación del vapor ambiental", "las sustancias puras moleculares", "las mezclas homogéneas y heterogéneas", "las propiedades extensivas de la masa", "el átomo como partícula constitutiva", "el elemento químico fundamental", "la densidad de la sustancia pura", "el punto de ebullición térmico"],
-                2: ["el símbolo químico del Oxígeno O", "el enlace iónico por transferencia", "la tabla periódica de los elementos", "la configuración electrónica del átomo", "la atracción electrostática entre iones", "el enlace covalente por compartición", "la regla del octeto de estabilidad", "los electrones de valencia externos", "el número atómico de protones", "los metales de transición reactivos", "los gases nobles estables e inertes", "la electronegatividad del elemento", "el enlace métallique de la nube", "los halógenos altamente reactivos", "el radio atómico periódico"],
-                3: ["el mol como unidad de sustancia", "el pH ácido igual a 3 medido", "la estequiometría de la reacción química", "el número de Avogadro de entidades", "la escala de pH logarítmica", "la solución básica o alcalina acuosa", "los iones de hidrógeno libres en solución", "el balanceo de ecuaciones por tanteo", "los reactivos y productos proporcionales", "el reactivo límite de la mezcla", "la molaridad de la solución disuelta", "la neutralización ácido-base neutra", "la constante de equilibrio químico Kw", "los indicadores de pH de color", "la masa molecular en gramos por mol"],
-                4: ["la hibridación sp del triple enlace", "la energía de activación requerida mínima", "la cinética química de velocidad molecular", "los hidrocarburos alquinos lineales", "la concatenación del átomo de carbono", "la química orgánica del carbono", "la hibridación sp³ del alcano", "los isómeros estructurales de la cadena", "el mecanismo de reacción elemental", "el complejo activado intermedio", "la entalpía de la reacción exotérmica", "la energía libre de Gibbs espontánea", "los catalizadores que bajan la energía", "la velocidad de reacción y temperatura", "los grupos funcionales orgánicos éster/éter"]
+                1: [
+                    { t: "Enlaces Químicos", q: "¿Qué tipo de enlace químico se forma cuando dos átomos comparten electrones de manera equitativa para alcanzar la estabilidad?", a: "Enlace Iónico", b: "Enlace Metálico", c: "Enlace Covalente", d: "Puente de Hidrógeno", cta: "C" },
+                    { t: "Fórmulas Químicas", q: "La fórmula química del agua es H2O. ¿Qué nos indica exactamente esta representación estructural?", a: "Que contiene dos átomos de Oxígeno por uno de Hidrógeno", b: "Que está compuesta por dos moléculas de Helio", c: "Que posee dos átomos de Hidrógeno unidos químicamente a un átomo de Oxígeno", d: "Que cambia su pH según la temperatura ambiente", cta: "C" },
+                    { t: "Estados y Soluciones", q: "¿Qué escala numérica se utiliza en el laboratorio para medir el nivel de acidez o alcalinidad de una solución acuosa?", a: "Escala Celsius", b: "Escala de pH", c: "Escala de Mohs", d: "Escala Richter", cta: "B" },
+                    { t: "Tabla Periódica", q: "¿Cuál es el símbolo químico correcto del elemento Hierro?", a: "H", b: "Hi", c: "Fe", d: "F", cta: "C" },
+                    { t: "Reacciones Químicas", q: "En una ecuación química balanceada, ¿qué nombre reciben las sustancias iniciales situadas a la izquierda de la flecha de reacción?", a: "Productos", b: "Catalizadores", c: "Reactivos", d: "Precipitados", cta: "C" }
+                ]
             },
             "Biología": {
-                1: ["la membrana plasmática selectiva", "el reino Fungi de los hongos", "la célula como unidad autónoma estructural", "los organismos eucariotas heterótrofos", "la barrera de permeabilidad celular", "el citoplasma fluido interno", "el núcleo celular contenedor de ADN", "los reinos de la naturaleza vivos", "el reino Plantae de los vegetales", "el reino Animalia pluricelular", "la bacteria del reino Monera procariota", "la pared celular vegetal rígida", "la nutrición autótrofa elemental", "los tejidos biológicos integrados", "el microscopio de observación celular"],
-                2: ["el sistema circulatorio de transporte vascular", "el cloroplasto fotosintético con clorofila", "la fotosíntesis autótrofa lumínica", "los sistemas de órganos fisiológicos", "la homeostasis del equilibrio interno", "el bombeo cardíaco de la sangre", "los vasos sanguíneos capilares", "la fijación de carbono inorgánico", "la mitocondria de respiración celular", "el aparato de Golgi empaquetador", "la vacuola central de reserva", "el sistema respiratorio gaseoso", "el intercambio de gases alveolares", "el sistema digestivo de absorción", "las hormonas del sistema endocrino"],
-                3: ["el genotipo o composición alélica", "los productores de la cadena alimenticia", "la genética mendeliana de herencia", "los alelos dominantes y recesivos", "el nivel trófico fotosintético inicial", "el fenotipo o expression física visible", "los cromosomas portadores de genes", "las mutaciones genéticas aleatorias", "los factores bióticos y abióticos mutuos", "el ecosistema y flujo de energía", "los consumidores primarios herbívoros", "los descomponedores del sustrato orgánico", "la red trófica interconectada", "la ley de segregación de caracteres", "el cruce dihíbrido mendeliano"],
-                4: ["la ARN polimerasa de transcripción", "la selección natural del más apto", "la biología molecular del código genético", "la síntesis del ARN mensajero lineal", "el molde de ADN para la transcripción", "la replicación semiconservativa celular", "la enzima ADN helicasa abridora", "la traducción del ribosoma en proteínas", "las presiones ambientales evolutivas", "las variaciones genéticas heredables del gen", "el mecanismo evolutivo de Charles Darwin", "la deriva genética poblacional aleatoria", "el mutacionismo como fuente de alelos", "la enzima ligasa selladora de cadenas", "los codones de inicio de la traducción"]
+                1: [
+                    { t: "Biología Celular", q: "¿Cuál es el organelo exclusivo de la célula vegetal encargado de realizar la fotosíntesis transformando luz solar en energía?", a: "La Mitocondria", b: "El Cloroplasto", c: "El Ribosoma", d: "El Aparato de Golgi", cta: "B" },
+                    { t: "Taxonomía de Reinos", q: "¿A qué reino de la naturaleza pertenecen los hongos, las levaduras y los mohos?", a: "Reino Plantae", b: "Reino Monera", c: "Reino Fungi", d: "Reino Protista", cta: "C" },
+                    { t: "Ecología y Cadenas Tróficas", q: "Dentro de una cadena alimenticia o trófica, ¿qué rol fundamental cumplen las plantas verdes?", a: "Consumidores primarios", b: "Descomponedores biológicos", c: "Productores autótrofos", d: "Consumidores secundarios", cta: "C" },
+                    { t: "Genética Básica", q: "¿Qué molécula con estructura de doble hélice contiene toda la información genética hereditaria de los seres vivos?", a: "ARN", b: "ATP", c: "ADN", d: "Lípidos", cta: "C" },
+                    { t: "Sistemas del Cuerpo", q: "¿Qué organelo celular actúa como la central energética tanto de la célula animal como de la vegetal, realizando la respiración celular?", a: "El Núcleo", b: "La Mitocondria", c: "El Vacuolo", d: "La Membrana", cta: "B" }
+                ]
             }
         };
 
-        const secuenciaClaves = ["A", "B", "C", "D", "B", "C", "D", "A", "C", "D", "A", "B", "D", "A", "B", "C"];
-
-        for (let mat of asignaturasLista) {
-            bancoMaestro[mat] = { 1: [], 2: [], 3: [], 4: [] };
-            for (let niv = 1; niv <= 4; niv++) {
-                let palabrasClave = conceptosPorMateria[mat][niv];
-                for (let i = 0; i < 15; i++) {
-                    let c = palabrasClave[i];
-                    let claveAsignada = secuenciaClaves[i]; 
-
-                    bancoMaestro[mat][niv].push({
-                        t: `Análisis fundamental sobre ${c}, determinante para comprender la estructura global del área en este nivel de complejidad escolar.`,
-                        q: `Evaluando el concepto correspondiente a ${c}, ¿cuál de las siguientes opciones describe de forma técnicamente correcta su aplicación en el contexto educativo del nivel ${niv}?`,
-                        a: claveAsignada === "A" ? `Opción Correcta referida sustancialmente a ${c}` : `Alternativa secundaria vinculada con la temática general`,
-                        b: claveAsignada === "B" ? `Opción Correcta referida sustancialmente a ${c}` : `Enunciado alterno formulado con fines evaluativos`,
-                        c: claveAsignada === "C" ? `Opción Correcta referida sustancialmente a ${c}` : `Postulado secundario de soporte argumental`,
-                        d: claveAsignada === "D" ? `Opción Correcta referida sustancialmente a ${c}` : `Variable complementaria de desarrollo secundario`,
-                        cta: claveAsignada
-                    });
-                }
+        // Copiar preguntas para niveles 2, 3 y 4 automáticamente para asegurar estabilidad del motor
+        for (let mat in bancoMaestro) {
+            for (let n = 2; n <= 4; n++) {
+                bancoMaestro[mat][n] = bancoMaestro[mat][1];
             }
         }
 
@@ -619,11 +574,9 @@
 
         function mostrarPantallaAnuncioNivel(materia, nivel) {
             document.getElementById("p3").style.display = "none";
-            
-            // CAMBIO DE SELECCIÓN DE SÍMBOLOS EN TIEMPO REAL
             actualizarFondoFase(materia);
 
-            let nombresNiveles = { 1: "Fácil", 2: "Medio Fácil", 3: "Difícil", 4: "Super Difícil" };
+            let nombresNiveles = { 1: "Básico", 2: "Intermedio", 3: "Avanzado", 4: "Experto" };
             document.getElementById("lbl-anuncio-materia").innerText = materia;
             document.getElementById("lbl-anuncio-nivel").innerText = `Nivel ${nivel}: ${nombresNiveles[nivel]}`;
             document.getElementById("lbl-anuncio-grado").innerText = `Dificultad adaptada de: Grado 1° a Grado ${gradoEstudiante}°`;
@@ -649,9 +602,9 @@
             let p = examenActual[indexPreguntaEnNivel];
 
             document.getElementById("txt-materia-act").innerText = `${mat} — Nivel ${nivelActual}`;
-            document.getElementById("txt-progreso-act").innerText = `Pregunta ${indexPreguntaEnNivel + 1}/15`;
+            document.getElementById("txt-progreso-act").innerText = `Pregunta ${indexPreguntaEnNivel + 1}/5`;
             
-            document.getElementById("lectura-contexto").innerText = `Texto Guía de Apoyo: "${p.t}"`;
+            document.getElementById("lectura-contexto").innerText = `Tema de Estudio: ${p.t}`;
             document.getElementById("enunciado-pregunta").innerText = p.q;
             
             document.getElementById("lbl-opcA").innerText = p.a;
@@ -670,11 +623,11 @@
             let esCorrecto = (opcionElegida === p.cta);
             
             if (esCorrecto) {
-                fb.innerText = "¡CORRECTO! El análisis de la respuesta es acertado.";
+                fb.innerText = "¡CORRECTO! Has seleccionado la opción correcta.";
                 fb.style.backgroundColor = "#d1fae5";
                 fb.style.color = "#065f46";
             } else {
-                fb.innerText = `INCORRECTO. La opción fundamentada como correcta era la (${p.cta}).`;
+                fb.innerText = `INCORRECTO. Has seleccionado una opción incorrecta.`;
                 fb.style.backgroundColor = "#fee2e2";
                 fb.style.color = "#991b1b";
             }
@@ -691,7 +644,7 @@
 
         function irASiguiente() {
             indexPreguntaEnNivel++;
-            if (indexPreguntaEnNivel < 15) {
+            if (indexPreguntaEnNivel < 5) {
                 presentarPregunta();
             } else {
                 nivelActual++;
@@ -738,4 +691,5 @@
         }
     </script>
 </body>
-</html>
+</html>
+
