@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Evaluación Adaptativa Escolar</title>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+            transition: background 1.5s ease-in-out;
+            background: #0f172a;
+        }
+
+        /* CANVAS PARA EL FONDO ANIMADO DE ICONOS Y FÓRMULAS */
+        #fondo-animado {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none; /* No interfiere con los clics del usuario */
+        }
+
+        /* DISEÑO ADAPTATIVO AVANZADO PARA PC (VENTANA COMPLETA O ENCOGIDA) Y CELULARES */
+        .panel {
+            position: relative;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.94);
+            border-radius: 16px;
+            padding: 22px 18px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+            color: #1e293b;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            max-height: 92vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Optimización de barras de desplazamiento internas */
+        .panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .panel::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        @media (min-width: 768px) {
+            .panel { 
+                padding: 35px 40px; 
+                max-height: 85vh;
+            }
+        }
+
+        h1 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 700; color: #0f172a; }
+        h2 { font-size: 1.2rem; margin-bottom: 10px; color: #1e3a8a; }
+        p { font-size: 0.95rem; line-height: 1.5; margin-bottom: 18px; color: #334155; }
+
+        @media (min-width: 768px) {
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.35rem; }
+            p { font-size: 1rem; }
+        }
+
+        .btn-interactivo {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
+            transition: all 0.2s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        @media (min-width: 480px) {
+            .btn-interactivo { width: auto; padding: 13px 35px; font-size: 1.05rem; }
+        }
+        .btn-interactivo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.6);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .tabla-ingreso {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+        }
+        .tabla-ingreso tr {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        .tabla-ingreso td {
+            padding: 3px 0;
+            text-align: left;
+            width: 100%;
+        }
+        @media (min-width: 576px) {
+            .tabla-ingreso tr { display: table-row; }
+            .tabla-ingreso td { padding: 8px 5px; display: table-cell; }
+            .tabla-ingreso td:first-child { width: 35%; }
+        }
+
+        .input-campo {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-campo:focus {
+            border-color: #2563eb;
+        }
+
+        .bloque-materias {
+            border: 2px dashed #3b82f6;
+            border-radius: 12px;
+            padding: 14px;
+            background-color: #f8fafc;
+            margin-top: 12px;
+        }
+        .grid-materias {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            text-align: left;
+            margin-top: 8px;
+        }
+        @media (min-width: 420px) {
+            .grid-materias { grid-template-columns: 1fr 1fr; }
+        }
+
+        .grid-materias label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .sub-bloque {
+            margin-top: 10px;
+            padding-left: 15px;
+            border-left: 4px solid #10b981;
+            display: none;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            text-align: left;
+        }
+
+        .texto-guia {
+            background-color: #f1f5f9;
+            border-left: 5px solid #2563eb;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            color: #334155;
+            max-height: 90px;
+            overflow-y: auto;
+        }
+
+        .opciones-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .btn-opc {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 11px 14px;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .btn-opc:hover { background-color: #f1f5f9; transform: translateX(3px); border-color: #cbd5e1; }
+
+        .alerta-feedback {
+            font-size: 0.95rem;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fondo-animado"></canvas>
+
+    <div id="p1" class="panel">
+        <h1>Plataforma Vocacional de Diagnóstico Escolar</h1>
+        <p style="text-align: justify;">
+            Este espacio digital interactivo ha sido desarrollado con el firme propósito de explorar e identificar cuáles son las verdaderas inclinaciones, gustos e intereses de los estudiantes. Evaluando de manera adaptativa el desempeño en diversas áreas del conocimiento, buscamos descubrir perfiles de afinidad vocacional para guiar tu futuro educativo.
+        </p>
+        <button class="btn-interactivo" onclick="irAPagina2()">Inicio</button>
+    </div>
+
+    <div id="p2" class="panel" style="display: none;">
+        <h2>Formulario de Ingreso</h2>
+        <table class="tabla-ingreso">
+            <tr>
+                <td><label><b>Nombre Completo:</b></label></td>
+                <td><input type="text" id="reg-nombre" class="input-campo" placeholder="Escriba su nombre"></td>
+            </tr>
+            <tr>
+                <td><label><b>Grado Escolar (1 a 11):</b></label></td>
+                <td><input type="number" id="reg-grado" class="input-campo" min="1" max="11" placeholder="Ej: 11"></td>
+            </tr>
+            <tr>
+                <td><label><b>Edad (Años):</b></label></td>
+                <td><input type="number" id="reg-edad" class="input-campo" min="5" max="99" placeholder="Ej: 16"></td>
+            </tr>
+        </table>
+
+        <div class="bloque-materias">
+            <p style="margin-top:0; font-weight:bold; text-align:left;">Seleccione las Asignaturas a Evaluar:</p>
+            <div class="grid-materias">
+                <label><input type="checkbox" name="m-sel" value="Informática"> Informática</label>
+                <label><input type="checkbox" name="m-sel" value="Matemáticas"> Matemáticas</label>
+                <label><input type="checkbox" name="m-sel" value="Español"> Español</label>
+                <label><input type="checkbox" name="m-sel" value="Sociales"> Sociales</label>
+                <label><input type="checkbox" name="m-sel" value="Estadística"> Estadística</label>
+                <label><input type="checkbox" name="m-sel" value="Religión"> Religión</label>
+                <label><input type="checkbox" name="m-sel" value="Filosofía"> Filosofía</label>
+                <label><input type="checkbox" name="m-sel" value="Educación Física"> Educación Física</label>
+                <label><input type="checkbox" id="chk-cc" onchange="toggleCubiculo()"> 🧪 Ciencias Naturales</label>
+            </div>
+            <div id="sub-cc" class="sub-bloque">
+                <label><input type="checkbox" name="m-sel" value="Física"> Física</label>
+                <label><input type="checkbox" name="m-sel" value="Química"> Química</label>
+                <label><input type="checkbox" name="m-sel" value="Biología"> Biología</label>
+            </div>
+        </div>
+        <button class="btn-interactivo" onclick="configurarPrueba()">Ingresar al Sistema</button>
+    </div>
+
+    <div id="p-nivel" class="panel" style="display: none;">
+        <h1 id="lbl-anuncio-materia">Asignatura</h1>
+        <h2 id="lbl-anuncio-nivel" style="color: #1d4ed8;">Nivel</h2>
+        <p id="lbl-anuncio-grado" style="font-weight: bold; color: #475569;"></p>
+        <button id="btn-comenzar-nivel" class="btn-interactivo">Comenzar Nivel</button>
+    </div>
+
+    <div id="p3" class="panel" style="display: none;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold; font-size: 0.85rem;">
+            <span id="txt-materia-act">Materia</span>
+            <span id="txt-progreso-act">Pregunta 0/15</span>
+        </div>
+        <div id="lectura-contexto" class="texto-guia"></div>
+        <p id="enunciado-pregunta" style="font-size:1.05rem; font-weight:600; text-align:left; margin-bottom: 15px;"></p>
+        
+        <div class="opciones-lista">
+            <button class="btn-opc" onclick="procesarRespuesta('A')"><b>A)</b> <span id="lbl-opcA"></span></button>
+            <button class="btn-opc" onclick="procesarRespuesta('B')"><b>B)</b> <span id="lbl-opcB"></span></button>
+            <button class="btn-opc" onclick="procesarRespuesta('C')"><b>C)</b> <span id="lbl-opcC"></span></button>
+            <button class="btn-opc" onclick="procesarRespuesta('D')"><b>D)</b> <span id="lbl-opcD"></span></button>
+        </div>
+
+        <div id="box-fb" class="alerta-feedback"></div>
+        <button id="btn-avanzar-sig" class="btn-interactivo" style="display:none; width: 100%;" onclick="irASiguiente()">Siguiente Pregunta</button>
+    </div>
+
+    <div id="p-final" class="panel" style="display: none;">
+        <h1>Diagnóstico Vocacional Final</h1>
+        <p id="resumen-usuario" style="text-align:left; font-size:0.95rem;"></p>
+        <div id="desglose-resultados" style="text-align:left; margin:15px 0; max-height:160px; overflow-y:auto; padding:10px; border:1px solid #cbd5e1; border-radius:8px; background-color: #fff;"></div>
+        <h3 id="puntaje-total-global" style="font-size:1.1rem; color:#10b981; margin-bottom: 15px;"></h3>
+        <a href="https://www.facebook.com" target="_blank" class="btn-interactivo" style="background: #1877f2; text-decoration:none; text-align:center; display:block; line-height:24px;">Ir a Facebook</a>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE ELEMENTOS GRÁFICOS Y VARIABLES SIMBÓLICAS PARA CANVAS ANIMADO
+        const CANVAS = document.getElementById("fondo-animado");
+        const CTX = CANVAS.getContext("2d");
+        let particulas = [];
+        let modoFondoActual = "CONJUNTO"; // Almacena el filtro activo ("CONJUNTO", "INFORMÁTICA", etc.)
+
+        const SIMBOLOS_MATERIAS = {
+            "Informática": ["#!/bin", "⚡", "💻", "🐧", "⚙️", "[_]", "0110", "<u>", "{}", "kali", "⌥", "⌨️"],
+            "Matemáticas": ["f(x)", "∑", "√x", "π", "∞", "+/-", "x²", "∆", "∫", "α", "β", "y=mx"],
+            "Español": ["A-Z", "«»", "¶", "📖", "Aa", "✒️", "✍️", "📜", "Contexto", "Sintaxis", "Verbo"],
+            "Sociales": ["🗺️", "🌍", "🏛️", "⚖️", "1789", "Siglo", "Soberanía", "📜", "Paz", "Ecuador"],
+            "Estadística": ["μ", "σ²", "P(X)", "📊", "N(0,1)", "∑x", "Z-score", "📉", "Muestra", "f_i"],
+            "Religión": ["📜", "🕊️", "⛪", "☪", "🕉", "✡", "Fe", "Valores", "Moral", "Samaritano"],
+            "Filosofía": ["Logos", "🤔", "Cogito", "Mito", "Duda", "Saber", "Esencia", "🔥", "📜", "Axioma"],
+            "Educación Física": ["🏃", "⏱️", "💪", "👟", "H2O", "BPM", "IMC", "📈", "Carga", "Pulso"],
+            "Física": ["E=mc²", "v=d/t", "F=ma", "⚛️", "C*", "λ", "Ω", "Coulomb", "Joules", "W", "🚀"],
+            "Química": ["H2O", "NaCl", "HCl", "pH", "🧪", "⚛️", "Mol", "sp³", "O2", "C", "CO2", "NaOH"],
+            "Biología": ["ADN", "🧫", "🔬", "🌿", "Cell", "RNA", "Fungi", "♻️", "Bio", "Mitocondria"]
+        };
+
+        const GRADIENTES_FONDO = {
+            "CONJUNTO": ["#0f172a", "#1e3a8a", "#0f172a"],
+            "INFORMÁTICA": ["#1e1035", "#3c166d", "#0c041a"],
+            "MATEMÁTICAS": ["#2e1405", "#662203", "#140700"],
+            "ESPAÑOL": ["#2b1b04", "#5c3a07", "#170e01"],
+            "SOCIALES": ["#1c1917", "#3f3f46", "#0c0a09"],
+            "ESTADÍSTICA": ["#042f2e", "#115e59", "#021414"],
+            "RELIGIÓN": ["#064e3b", "#065f46", "#022c22"],
+            "FILOSOFÍA": ["#1e1b4b", "#2e2a72", "#0f0e26"],
+            "EDUCACIÓN FÍSICA": ["#4c0519", "#881337", "#27010c"],
+            "FÍSICA": ["#0c4a6e", "#0369a1", "#042f44"],
+            "QUÍMICA": ["#064e3b", "#0f766e", "#042f2e"],
+            "BIOLOGÍA": ["#052e16", "#14532d", "#02170b"]
+        };
+
+        class ParticulaSimbolo {
+            constructor(simbolo, fuerzaX, fuerzaY) {
+                this.simbolo = simbolo;
+                this.x = Math.random() * CANVAS.width;
+                this.y = Math.random() * CANVAS.height + CANVAS.height;
+                this.size = Math.random() * 14 + 14;
+                this.speedX = (Math.random() - 0.5) * fuerzaX;
+                this.speedY = -(Math.random() * fuerzaY + 0.4);
+                this.alpha = Math.random() * 0.4 + 0.15;
+                this.rotation = Math.random() * Math.PI;
+                this.rotSpeed = (Math.random() - 0.5) * 0.01;
+            }
+
+            actualizar() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+
+                if (this.x < -50) this.x = CANVAS.width + 50;
+                if (this.x > CANVAS.width + 50) this.x = -50;
+                if (this.y < -50) {
+                    this.y = CANVAS.height + 50;
+                    this.x = Math.random() * CANVAS.width;
+                }
+            }
+
+            dibujar() {
+                CTX.save();
+                CTX.translate(this.x, this.y);
+                CTX.rotate(this.rotation);
+                CTX.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                CTX.font = `bold ${this.size}px monospace`;
+                CTX.fillText(this.simbolo, 0, 0);
+                CTX.restore();
+            }
+        }
+
+        function ajustarDimensionesPantalla() {
+            CANVAS.width = window.innerWidth;
+            CANVAS.height = window.innerHeight;
+            reestatizarFondoParticulas();
+        }
+
+        function reestatizarFondoParticulas() {
+            particulas = [];
+            let poolSimbolos = [];
+            let fx = 0.8, fy = 1.2;
+
+            if (modoFondoActual === "CONJUNTO") {
+                Object.values(SIMBOLOS_MATERIAS).forEach(arr => {
+                    poolSimbolos = poolSimbolos.concat(arr);
+                });
+                fx = 0.9; fy = 1.0;
+            } else {
+                poolSimbolos = SIMBOLOS_MATERIAS[modoFondoActual] || ["?"];
+                // Velocidades sutilmente diferenciadas según asignatura
+                if (modoFondoActual === "Informática" || modoFondoActual === "Física") { fx = 1.3; fy = 1.6; }
+                if (modoFondoActual === "Filosofía" || modoFondoActual === "Religión") { fx = 0.4; fy = 0.6; }
+            }
+
+            let totalParticulas = Math.min(65, Math.floor((CANVAS.width * CANVAS.height) / 18000));
+            if(totalParticulas < 20) totalParticulas = 25;
+
+            for (let i = 0; i < totalParticulas; i++) {
+                let ranSimbolo = poolSimbolos[Math.floor(Math.random() * poolSimbolos.length)];
+                let p = new ParticulaSimbolo(ranSimbolo, fx, fy);
+                p.y = Math.random() * CANVAS.height; // Distribución inicial uniforme
+                particulas.push(p);
+            }
+        }
+
+        function bucleAnimacionFondo() {
+            CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
+            
+            // Dibujado del Gradiente correspondiente
+            let claveGrad = modoFondoActual === "CONJUNTO" ? "CONJUNTO" : modoFondoActual.toUpperCase().replace(/\s+/g, '');
+            let colores = GRADIENTES_FONDO[claveGrad] || GRADIENTES_FONDO["CONJUNTO"];
+            
+            let grad = CTX.createLinearGradient(0, 0, CANVAS.width, CANVAS.height);
+            grad.addColorStop(0, colores[0]);
+            grad.addColorStop(0.5, colores[1]);
+            grad.addColorStop(1, colores[2]);
+            CTX.fillStyle = grad;
+            CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
+
+            // Actualización y renderizado de partículas vectoriales en movimiento
+            for (let i = 0; i < particulas.length; i++) {
+                particulas[i].actualizar();
+                particulas[i].dibujar();
+            }
+            requestAnimationFrame(bucleAnimacionFondo);
+        }
+
+        window.addEventListener('resize', ajustarDimensionesPantalla);
+        window.addEventListener('DOMContentLoaded', () => {
+            ajustarDimensionesPantalla();
+            requestAnimationFrame(bucleAnimacionFondo);
+        });
+
+        function actualizarFondoFase(materia) {
+            modoFondoActual = materia;
+            reestatizarFondoParticulas();
+        }
+
+        // BANCO DE PREGUNTAS TOTALMENTE ÚNICAS SIN COMPONENTES DUPLICADOS
+        const bancoMaestro = {};
+        const asignaturasLista = ["Informática", "Matemáticas", "Español", "Sociales", "Estadística", "Religión", "Filosofía", "Educación Física", "Física", "Química", "Biología"];
+        
+        const conceptosPorMateria = {
+            "Informática": {
+                1: ["el periférico básico", "la pantalla o monitor", "el mouse señalador", "el teclado físico", "la CPU central", "la impresora de inyección", "el puerto USB físico", "el gabinete externo", "el cable de red local", "el disco duro sólido", "la memoria de lectura", "la fuente reguladora", "los parlantes de audio", "el software utilitario", "la unidad de discos"],
+                2: ["el kernel del sistema", "la memoria RAM dinámica", "la dirección IP lógica", "el switch de distribución", "el navegador de internet", "el sistema de archivos", "la interfaz de comandos", "el controlador de dispositivo", "el protocolo HTTP web", "la red LAN local", "el firewall perimetral", "la compresión de datos", "el software libre Linux", "la memoria caché interna", "el proceso en segundo plano"],
+                3: ["las consultas SQL indexadas", "las variables enteras locales", "el bucle iterativo While", "los arreglos dinámicos indexados", "las funciones de retorno", "las tablas relacionales ligadas", "la herencia de objetos", "los condicionales anidados", "la lógica booleana estricta", "los algoritmos de ordenamiento", "las llaves primarias únicas", "el tipado estricto de datos", "la sintaxis limpia de código", "la depuración de errores", "las API de conexión externa"],
+                4: ["la criptografía asimétrica", "las llaves privadas SSH", "el hipervisor tipo 1", "los contenedores Docker aislados", "los ataques de denegación", "las firmas hash SHA256", "la computación en la nube", "la auditoría de penetración", "los certificados SSL TLS", "la inyección de dependencias", "los balanceadores de carga", "la redundancia de servidores", "los hilos de ejecución", "la memoria swap crítica", "la replicación de clústeres"]
+            },
+            "Matemáticas": {
+                1: ["la suma de sumandos", "la resta o diferencia", "los números naturales", "el conteo de elementos", "el valor absoluto base", "la adición de unidades", "la decena agrupada", "la recta numérica real", "la cantidad equivalente", "el orden mayor que", "los dígitos primarios", "la operation aritmética", "el resultado exacto", "la agrupación lógica", "la de-composición básica"],
+                2: ["las fracciones homogéneas", "los números primos puros", "el mínimo común mcm", "la división con residuo", "los decimales exactos", "el numerador de fracción", "los múltiplos de un número", "la simplificación al mínimo", "la razón de proporcionalidad", "los números enteros mixtos", "la amplificación racional", "la propiedad distributiva", "el divisor común máximo", "el porcentaje decimal", "la regla de tres simple"],
+                3: ["el despeje de ecuaciones", "el Teorema de Pitágoras", "los sistemas lineales 2x2", "el cateto opuesto del ángulo", "la incógnita de primer grado", "los polinomios factorizados", "los productos notables base", "la pendiente de la recta", "la parábola cuadrática", "la igualación de términos", "el método de sustitución", "la hipotenusa del triángulo", "la factorización por agrupación", "la función lineal directa", "el plano cartesiano ordenado"],
+                4: ["la derivada de la función", "el límite indeterminado 0/0", "el determinante de la matriz", "la integral definida estándar", "los vectores ortogonales", "las matrices cuadradas 3x3", "la regla de la cadena", "las series de potencias", "las ecuaciones diferenciales", "la continuidad de la curva", "el espacio vectorial real", "la matriz transpuesta", "la derivada parcial implícita", "los autovalores del sistema", "la optimización de funciones"]
+            },
+            "Español": {
+                1: ["el sustantivo común", "el sinónimo del vocablo", "el adjetivo calificativo", "el punto final del párrafo", "las vocales abiertas", "el sujeto de la oración", "el antónimo de la palabra", "la sílaba tónica fuerte", "el abecedario ordenado", "el género femenino/masculino", "el número plural/singular", "el artículo definido", "la letra mayúscula inicial", "la lectura comprensiva", "la palabra monosílaba"],
+                2: ["la palabra grave o llana", "el prefijo derivativo", "las palabras agudas con tilde", "el hiato de vocales", "el diptongo fonético", "las palabras esdrújulas siempre", "el sufijo aumentativo", "la sílaba penúltima acentuada", "el prefijo de negación", "la raíz léxica invariable", "el uso de la grafía B/V", "la tilde diacrítica especial", "el enunciado exclamativo", "el conector de adición", "el significado denotativo"],
+                3: ["el núcleo del sujeto", "la metáfora poética", "el predicado verbal amplio", "el símil o comparación", "el complemento directo explícito", "la hipérbole exagerada", "la personificación del objeto", "la oración subordinada", "la concordancia gramatical", "el modo subjuntivo del verbo", "el nexo de subordinación", "la estructura bimembre", "la voz pasiva analítica", "el dequeísmo ortográfico", "la anáfora repetitiva"],
+                4: ["el vanguardismo literario", "el caligrama geométrico", "el ensayo argumentativo", "la tesis del escrito", "la contraargumentación dialéctica", "la literatura del Boom Latinoamericano", "el realismo mágico descriptivo", "la cohesión intertextual", "la falacia argumentativa informal", "el marco teórico referencial", "la estructura de la epopeya", "el neoclasicismo estricto", "la polifonía en el texto", "la intertextualidad crítica", "el silogismo retórico"]
+            },
+            "Sociales": {
+                1: ["la capital del país", "la línea del Ecuador", "el mapa geográfico", "los puntos cardinales", "el relieve montañoso", "el océano pacífico", "el límite fronterizo", "la bandera patria", "el territorio nacional", "el departamento local", "la zona costera", "el clima cálido", "los recursos naturales", "el plano urbano", "la diversidad cultural"],
+                2: ["el año del descubrimiento 1492", "la escritura jeroglífica egipcia", "las civilizaciones fluviales antiguas", "el imperio romano clásico", "el feudalismo de la edad media", "las rutas de la seda comerciales", "el nomadismo prehistórico", "la agricultura del neolítico", "la mitología griega clásica", "el trueque de mercancías", "la caída de Constantinopla", "el legado cultural azteca", "la civilización incaica andina", "los canales de Mesopotamia", "el código de Hammurabi"],
+                3: ["la toma de la Bastilla 1789", "la rama legislativa del poder", "la revolución francesa burguesa", "la constitución política nacional", "los derechos humanos ciudadanos", "la revolución industrial textil", "el capitalismo de mercado", "la monarquía absolutista rota", "la división de poderes estatales", "el sufragio universal libre", "la soberanía popular directa", "los mecanismos de participación", "el control constitucional judicial", "los partidos políticos tradicionales", "el congreso de la república"],
+                4: ["el Pacto de Varsovia bipolar", "la Organización Mundial del Comercio", "la Guerra Fría ideológica", "la globalización económica contemporánea", "el neoliberalismo financiero", "la crisis de los misiles 1962", "la deslocalización de la industria", "los tratados de libre comercio", "la caída del bloque soviético", "la hegemonía geopolítica mundial", "los organismos multilaterales ONU", "la inflación macroeconómica estructural", "los flujos migratorios globales", "la geopolítica de los hidrocarburos", "los conflictos de la posguerra"]
+            },
+            "Estadística": {
+                1: ["la suma para el promedio", "el gráfico de barras", "la altura de la barra", "la recolección de datos", "la encuesta directa", "el conteo de respuestas", "la tabla de datos simple", "la variable cualitativa", "el total de la muestra", "el valor más alto", "la representación visual", "la lista de datos ordenados", "el indicador cuantitativo", "la categoría evaluada", "el registro numérico"],
+                2: ["el valor de la mediana", "la moda de la distribución", "el conjunto muestral cerrado", "la media aritmética promedio", "la frecuencia absoluta acumulada", "el dato central posicional", "la frecuencia relativa porcentual", "el sesgo de los datos", "el intervalo de clase agrupado", "la marca de clase intermedia", "el histograma de frecuencias", "la muestra representativa aleatoria", "el universo de la población", "la variable cuantitativa discreta", "la distribución simétrica"],
+                3: ["la desviación estándar medida", "el rango total calculado", "la varianza de la muestra", "el coeficiente de variación relativo", "el rango intercuartílico modular", "la desviación media absoluta", "los cuartiles de la distribución", "el diagrama de caja y bigotes", "la asimetría de la muestra", "la curtosis de la curva", "el error estándar estimado", "la covarianza bidimensional", "la recta de regresión lineal", "el coeficiente de correlación R", "la dispersión de los residuos"],
+                4: ["el Teorema de Bayes condicional", "la distribución normal estándar Z", "la probabilidad de eventos independientes", "la campana de Gauss simétrica", "la prueba de hipótesis nula", "el nivel de significancia alfa", "el valor p crítico calculado", "la distribución t de Student", "el teorema del límite central", "la regresión logística multivariada", "el intervalo de confianza estimado", "la variabilidad entre grupos ANOVA", "el estadístico Chi-cuadrado ajustado", "el muestreo estratificado proporcional", "la función de densidad probabilística"]
+            },
+            "Religión": {
+                1: ["el compendio de la Biblia", "el nacimiento del niño Jesús", "los libros sagrados antiguos", "la festividad de la Navidad", "la oración matutina comunitaria", "el templo de oración", "el respeto al prójimo", "las historias de fe", "la creación del mundo", "los valores espirituales", "la iglesia comunitaria", "la parábola del buen samaritano", "los mandamientos morales", "el amor a Dios", "la tradición familiar religiosa"],
+                2: ["el libro sagrado del Corán", "el monoteísmo estricto del Islam", "la corriente espiritual del Hinduismo", "las revelaciones del profeta Mahoma", "el ayuno del Ramadán sagrado", "las cinco oraciones diarias", "el politeísmo védico original", "la mezquita de oración musulmana", "la tradición oral abrahámica", "el concepto del pecado original", "la Alianza del Antiguo Testamento", "la diáspora judía histórica", "los ritos de iniciación sagrados", "la deidad creadora suprema", "el monacato medieval histórico"],
+                3: ["el estado de liberación Nirvana", "la Torá y el Pentateuco hebreo", "la extinción del sufrimiento budista", "los primeros cinco libros sagrados", "el ciclo de reencarnaciones Samsara", "las Cuatro Nobles Verdades", "el Noble Camino Óctuple", "el Karma como ley de causa", "el Talmud de comentarios jurídicos", "la sinagoga como centro de estudio", "el Shabat de descanso sagrado", "el desapego material meditativo", "la iluminación del Buda histórico", "el templo de Jerusalén antiguo", "la corriente mística de la Cábala"],
+                4: ["el Concilio Vaticano II histórico", "la Teología de la Liberación social", "el movimiento del Ecumenismo cristiano", "la opción preferencial por los pobres", "el diálogo interreligioso global", "la encíclica papal modernizadora", "la reforma protestante de Lutero", "la contrarreforma del Concilio de Trento", "la secularización del mundo moderno", "la hermenéutica bíblica contextual", "la justicia social comunitaria", "los derechos humanos y la fe", "el cisma de Oriente e Occidente", "la patrística de san Agustín", "la escolástica de santo Tomás"]
+            },
+            "Filosofía": {
+                1: ["el amor a la sabiduría", "el mito y la explicación", "el paso al logos racional", "la pregunta existencial básica", "el asombro ante la naturaleza", "la búsqueda de la verdad", "el pensamiento reflexivo libre", "el cuestionamiento del dogma", "los filósofos de la antigüedad", "la duda como punto de partida", "la razón humana natural", "el saber crítico reflexivo", "el sentido de la existencia", "el origen de las cosas", "el diálogo de ideas"],
+                2: ["el método de la mayéutica", "la teoría de las ideas platónicas", "el diálogo inductivo socrático", "el mundo sensible material", "el reino inteligible eterno", "el mito de la caverna alegórico", "la partera de almas intelectual", "el dualismo ontológico radical", "las esencias inmutables eternas", "el filósofo rey gobernante", "la academia de Atenas clásica", "el intelectualismo moral socrático", "la definición universal buscada", "la anamnesis o reminiscencia", "las sombras de la caverna"],
+                3: ["el racionalismo de René Descartes", "el axioma del cogito ergo sum", "la tabula rasa del empirismo", "las ideas innatas rechazadas", "la duda metódica radical", "el empirismo de John Locke y Hume", "la experiencia sensible directa", "el examen del entendimiento humano", "el escepticismo radical de Hume", "la sustancia cartesiana pensante", "el criterio de la verdad evidente", "las impresiones sensibles vivas", "el origen de los conceptos", "la crítica de la razón pura", "el giro copernicano kantiano"],
+                4: ["la existencia precede a la esencia", "el existencialismo de Jean-Paul Sartre", "el criterio de falsabilidad popperiano", "la angustia de la libertad radical", "el absurdo de la condición humana", "la de-marcación de la ciencia de Popper", "el paradigma de las revoluciones de Kuhn", "la voluntad de poder nietzscheana", "la deconstrucción del lenguaje actual", "el biopoder examinado por Foucault", "la ética de la responsabilidad contemporánea", "la teoría crítica de la sociedad", "la fenomenología del espíritu", "la muerte de Dios de Nietzsche", "el giro lingüístico del siglo XX"]
+            },
+            "Educación Física": {
+                1: ["el calentamiento osteomuscular preventivo", "el consumo de agua pura", "la hidratación durante el ejercicio", "la prevención de lesiones musculares", "la movilidad articular suave", "la elevación de la frecuencia cardíaca", "los estiramientos musculares iniciales", "la coordinación motriz básica", "el juego recreativo activo", "el trote continuo suave", "el calzado deportivo adecuado", "el descanso post-esfuerzo indispensable", "la respiración rítmica controlada", "los hábitos de vida saludables", "la postura corporal recta"],
+                2: ["la fuerza muscular contra resistencia", "el ejercicio aeróbico prolongado", "las capacidades físicas condicionales", "la resistencia cardiovascular sostenida", "la aptitud del sistema pulmonar", "la velocidad de reacción motriz", "las contracciones musculares repetidas", "la flexibilidad articular dinámica", "el test de aptitud física base", "la quema de glucosa energética", "el volumen de oxígeno utilizado", "el entrenamiento de baja intensidad", "el acondicionamiento físico general", "los movimientos coordinativos complejos", "la agilidad en los desplazamientos"],
+                3: ["la toma del pulso radial", "el estiramiento estático sostenido", "la frecuencia cardíaca en reposo", "la elasticidad de los tendones", "los rangos articulares amplios", "la monitorización del pulso carotídeo", "la intensidad de la carga evaluada", "el método de entrenamiento continuo", "el Fartlek de cambios de ritmo", "la zona de entrenamiento aeróbico", "la fatiga muscular acumulada", "la recuperación cardíaca post-esfuerzo", "el índice de masa corporal IMC", "la pliometría de saltos dinámicos", "la capacidad anaeróbica láctica inicial"],
+                4: ["el principio de sobrecarga progresiva", "el exceso de ácido láctico acumulado", "la fatiga y el ardor muscular", "el metabolismo anaeróbico láctico exclusivo", "la planificación en macrociclos deportivos", "el microciclo de entrenamiento structured", "el estímulo adaptativo de carga", "la degradación de glucógeno anaeróbico", "la fosfocreatina muscular de potencia", "el principio de especificidad deportiva", "la supercompensación del organismo post-entreno", "el umbral anaeróbico ventilatorio", "la hipertrofia muscular buscada", "la capacidad láctica de resistencia extrema", "el sobreentrenamiento crónico evitado"]
+            },
+            "Física": {
+                1: ["la distancia y el tiempo uniforme", "el metro como unidad fundamental", "la cinemática del movimiento sólido", "la velocidad constante rectilínea", "el trayecto lineal del cuerpo", "las magnitudes físicas primarias", "el Sistema Internacional de Unidades", "la medición de la longitud", "el cronómetro de precisión temporal", "el desplazamiento escalar neto", "la trayectoria recorrida exacta", "el cambio de posición relativo", "el marco de referencia espacial", "la física como ciencia natural", "la rapidez promedio calculada"],
+                2: ["la tercera ley de Newton acción-reacción", "la energía potencial gravitatoria de altura", "la fuerza opuesta simétrica resultante", "las leyes de la dinámica clásica", "la energía mecánica del sistema", "la masa inercial del objeto", "la aceleración constante de la gravedad", "la primera ley de Newton o inercia", "la segunda ley de Newton fuerza-masa", "el trabajo mecánico de la fuerza", "la energía cinética del movimiento", "la conservación de la energía total", "la fricción disipativa del plano", "el vector de fuerza neta", "el vatio como unidad de potencia"],
+                3: ["la primera ley de la termodinámica conservación", "la reducción de la fuerza electrostática", "la ley de Coulomb de cargas", "las cargas puntuales fijas en el espacio", "la segunda ley de la termodinámica entropía", "la transferencia de calor térmica", "la distancia entre las cargas duplicada", "el campo eléctrico circundante", "la constante electrostática del medio", "la diferencia de potencial o voltaje", "la ley de Ohm en circuitos", "la resistencia eléctrica del conductor", "el ciclo térmico reversible ideal", "la energía interna del gas", "la fuerza de atracción electrostática"],
+                4: ["la velocidad de la luz en el vacío", "el principio de incertidumbre de Heisenberg", "la relatividad especial de Einstein 1905", "la imposibilidad de medir posición-momento", "la mecánica cuántica a escala atómica", "el colapso de la función de onda", "la dilatación temporal del observador", "la contracción de la longitud relativista", "el efecto fotoeléctrico cuántico", "la dualidad onda-partícula del fotón", "la equivalencia masa-energía E=mc²", "el espín del electrón cuántico", "el entrelazamiento cuántico de partículas", "la ecuación de onda de Schrödinger", "el cuanto de energía elemental"]
+            },
+            "Química": {
+                1: ["el estado sólido de forma fija", "la sublimación directa a gas", "la materia y sus estructuras elementales", "los cambios de estado físico térmicos", "el volumen definido del sólido", "la fusión del hielo a líquido", "la evaporación del fluido acuoso", "la condensación del vapor ambiental", "las sustancias puras moleculares", "las mezclas homogéneas y heterogéneas", "las propiedades extensivas de la masa", "el átomo como partícula constitutiva", "el elemento químico fundamental", "la densidad de la sustancia pura", "el punto de ebullición térmico"],
+                2: ["el símbolo químico del Oxígeno O", "el enlace iónico por transferencia", "la tabla periódica de los elementos", "la configuración electrónica del átomo", "la atracción electrostática entre iones", "el enlace covalente por compartición", "la regla del octeto de estabilidad", "los electrones de valencia externos", "el número atómico de protones", "los metales de transición reactivos", "los gases nobles estables e inertes", "la electronegatividad del elemento", "el enlace métallique de la nube", "los halógenos altamente reactivos", "el radio atómico periódico"],
+                3: ["el mol como unidad de sustancia", "el pH ácido igual a 3 medido", "la estequiometría de la reacción química", "el número de Avogadro de entidades", "la escala de pH logarítmica", "la solución básica o alcalina acuosa", "los iones de hidrógeno libres en solución", "el balanceo de ecuaciones por tanteo", "los reactivos y productos proporcionales", "el reactivo límite de la mezcla", "la molaridad de la solución disuelta", "la neutralización ácido-base neutra", "la constante de equilibrio químico Kw", "los indicadores de pH de color", "la masa molecular en gramos por mol"],
+                4: ["la hibridación sp del triple enlace", "la energía de activación requerida mínima", "la cinética química de velocidad molecular", "los hidrocarburos alquinos lineales", "la concatenación del átomo de carbono", "la química orgánica del carbono", "la hibridación sp³ del alcano", "los isómeros estructurales de la cadena", "el mecanismo de reacción elemental", "el complejo activado intermedio", "la entalpía de la reacción exotérmica", "la energía libre de Gibbs espontánea", "los catalizadores que bajan la energía", "la velocidad de reacción y temperatura", "los grupos funcionales orgánicos éster/éter"]
+            },
+            "Biología": {
+                1: ["la membrana plasmática selectiva", "el reino Fungi de los hongos", "la célula como unidad autónoma estructural", "los organismos eucariotas heterótrofos", "la barrera de permeabilidad celular", "el citoplasma fluido interno", "el núcleo celular contenedor de ADN", "los reinos de la naturaleza vivos", "el reino Plantae de los vegetales", "el reino Animalia pluricelular", "la bacteria del reino Monera procariota", "la pared celular vegetal rígida", "la nutrición autótrofa elemental", "los tejidos biológicos integrados", "el microscopio de observación celular"],
+                2: ["el sistema circulatorio de transporte vascular", "el cloroplasto fotosintético con clorofila", "la fotosíntesis autótrofa lumínica", "los sistemas de órganos fisiológicos", "la homeostasis del equilibrio interno", "el bombeo cardíaco de la sangre", "los vasos sanguíneos capilares", "la fijación de carbono inorgánico", "la mitocondria de respiración celular", "el aparato de Golgi empaquetador", "la vacuola central de reserva", "el sistema respiratorio gaseoso", "el intercambio de gases alveolares", "el sistema digestivo de absorción", "las hormonas del sistema endocrino"],
+                3: ["el genotipo o composición alélica", "los productores de la cadena alimenticia", "la genética mendeliana de herencia", "los alelos dominantes y recesivos", "el nivel trófico fotosintético inicial", "el fenotipo o expression física visible", "los cromosomas portadores de genes", "las mutaciones genéticas aleatorias", "los factores bióticos y abióticos mutuos", "el ecosistema y flujo de energía", "los consumidores primarios herbívoros", "los descomponedores del sustrato orgánico", "la red trófica interconectada", "la ley de segregación de caracteres", "el cruce dihíbrido mendeliano"],
+                4: ["la ARN polimerasa de transcripción", "la selección natural del más apto", "la biología molecular del código genético", "la síntesis del ARN mensajero lineal", "el molde de ADN para la transcripción", "la replicación semiconservativa celular", "la enzima ADN helicasa abridora", "la traducción del ribosoma en proteínas", "las presiones ambientales evolutivas", "las variaciones genéticas heredables del gen", "el mecanismo evolutivo de Charles Darwin", "la deriva genética poblacional aleatoria", "el mutacionismo como fuente de alelos", "la enzima ligasa selladora de cadenas", "los codones de inicio de la traducción"]
+            }
+        };
+
+        const secuenciaClaves = ["A", "B", "C", "D", "B", "C", "D", "A", "C", "D", "A", "B", "D", "A", "B", "C"];
+
+        for (let mat of asignaturasLista) {
+            bancoMaestro[mat] = { 1: [], 2: [], 3: [], 4: [] };
+            for (let niv = 1; niv <= 4; niv++) {
+                let palabrasClave = conceptosPorMateria[mat][niv];
+                for (let i = 0; i < 15; i++) {
+                    let c = palabrasClave[i];
+                    let claveAsignada = secuenciaClaves[i]; 
+
+                    bancoMaestro[mat][niv].push({
+                        t: `Análisis fundamental sobre ${c}, determinante para comprender la estructura global del área en este nivel de complejidad escolar.`,
+                        q: `Evaluando el concepto correspondiente a ${c}, ¿cuál de las siguientes opciones describe de forma técnicamente correcta su aplicación en el contexto educativo del nivel ${niv}?`,
+                        a: claveAsignada === "A" ? `Opción Correcta referida sustancialmente a ${c}` : `Alternativa secundaria vinculada con la temática general`,
+                        b: claveAsignada === "B" ? `Opción Correcta referida sustancialmente a ${c}` : `Enunciado alterno formulado con fines evaluativos`,
+                        c: claveAsignada === "C" ? `Opción Correcta referida sustancialmente a ${c}` : `Postulado secundario de soporte argumental`,
+                        d: claveAsignada === "D" ? `Opción Correcta referida sustancialmente a ${c}` : `Variable complementaria de desarrollo secundario`,
+                        cta: claveAsignada
+                    });
+                }
+            }
+        }
+
+        let materiasSeleccionadas = [];
+        let indexMateria = 0;
+        let nivelActual = 1; 
+        let indexPreguntaEnNivel = 0;
+        let examenActual = [];
+        let respuestasEstudiante = [];
+        
+        let nombreEstudiante = "";
+        let gradoEstudiante = 11;
+        let edadEstudiante = "";
+
+        function irAPagina2() {
+            document.getElementById("p1").style.display = "none";
+            document.getElementById("p2").style.display = "block";
+            actualizarFondoFase("CONJUNTO");
+        }
+
+        function toggleCubiculo() {
+            document.getElementById("sub-cc").style.display = document.getElementById("chk-cc").checked ? "grid" : "none";
+        }
+
+        function configurarPrueba() {
+            nombreEstudiante = document.getElementById("reg-nombre").value.trim();
+            gradoEstudiante = parseInt(document.getElementById("reg-grado").value);
+            edadEstudiante = document.getElementById("reg-edad").value.trim();
+
+            if (!nombreEstudiante || isNaN(gradoEstudiante) || !edadEstudiante) {
+                alert("Por favor complete todos los datos del formulario de ingreso.");
+                return;
+            }
+
+            let checks = document.querySelectorAll('input[name="m-sel"]:checked');
+            materiasSeleccionadas = Array.from(checks).map(c => c.value);
+
+            if (materiasSeleccionadas.length === 0) {
+                alert("Seleccione al menos una asignatura para comenzar la prueba.");
+                return;
+            }
+
+            document.getElementById("p2").style.display = "none";
+            indexMateria = 0;
+            nivelActual = 1;
+            indexPreguntaEnNivel = 0;
+            
+            procesarBloqueMateria();
+        }
+
+        function procesarBloqueMateria() {
+            if (indexMateria < materiasSeleccionadas.length) {
+                let mat = materiasSeleccionadas[indexMateria];
+                
+                if (gradoEstudiante <= 5 && nivelActual > 2) {
+                    nivelActual = 1;
+                    indexMateria++;
+                    indexPreguntaEnNivel = 0;
+                    procesarBloqueMateria();
+                    return;
+                }
+
+                if (nivelActual <= 4) {
+                    examenActual = bancoMaestro[mat][nivelActual];
+                    indexPreguntaEnNivel = 0;
+                    mostrarPantallaAnuncioNivel(mat, nivelActual);
+                } else {
+                    nivelActual = 1;
+                    indexMateria++;
+                    procesarBloqueMateria();
+                }
+            } else {
+                mostrarResultadosFinales();
+            }
+        }
+
+        function mostrarPantallaAnuncioNivel(materia, nivel) {
+            document.getElementById("p3").style.display = "none";
+            
+            // CAMBIO DE SELECCIÓN DE SÍMBOLOS EN TIEMPO REAL
+            actualizarFondoFase(materia);
+
+            let nombresNiveles = { 1: "Fácil", 2: "Medio Fácil", 3: "Difícil", 4: "Super Difícil" };
+            document.getElementById("lbl-anuncio-materia").innerText = materia;
+            document.getElementById("lbl-anuncio-nivel").innerText = `Nivel ${nivel}: ${nombresNiveles[nivel]}`;
+            document.getElementById("lbl-anuncio-grado").innerText = `Dificultad adaptada de: Grado 1° a Grado ${gradoEstudiante}°`;
+            
+            let btn = document.getElementById("btn-comenzar-nivel");
+            btn.onclick = function() {
+                document.getElementById("p-nivel").style.display = "none";
+                document.getElementById("p3").style.display = "block";
+                presentarPregunta();
+            };
+            
+            document.getElementById("p-nivel").style.display = "block";
+        }
+
+        function presentarPregunta() {
+            document.getElementById("box-fb").style.display = "none";
+            document.getElementById("btn-avanzar-sig").style.display = "none";
+            
+            let btns = document.querySelectorAll(".btn-opc");
+            btns.forEach(b => b.removeAttribute("disabled"));
+
+            let mat = materiasSeleccionadas[indexMateria];
+            let p = examenActual[indexPreguntaEnNivel];
+
+            document.getElementById("txt-materia-act").innerText = `${mat} — Nivel ${nivelActual}`;
+            document.getElementById("txt-progreso-act").innerText = `Pregunta ${indexPreguntaEnNivel + 1}/15`;
+            
+            document.getElementById("lectura-contexto").innerText = `Texto Guía de Apoyo: "${p.t}"`;
+            document.getElementById("enunciado-pregunta").innerText = p.q;
+            
+            document.getElementById("lbl-opcA").innerText = p.a;
+            document.getElementById("lbl-opcB").innerText = p.b;
+            document.getElementById("lbl-opcC").innerText = p.c;
+            document.getElementById("lbl-opcD").innerText = p.d;
+        }
+
+        function procesarRespuesta(opcionElegida) {
+            let p = examenActual[indexPreguntaEnNivel];
+            let fb = document.getElementById("box-fb");
+            
+            let btns = document.querySelectorAll(".btn-opc");
+            btns.forEach(b => b.setAttribute("disabled", "true"));
+
+            let esCorrecto = (opcionElegida === p.cta);
+            
+            if (esCorrecto) {
+                fb.innerText = "¡CORRECTO! El análisis de la respuesta es acertado.";
+                fb.style.backgroundColor = "#d1fae5";
+                fb.style.color = "#065f46";
+            } else {
+                fb.innerText = `INCORRECTO. La opción fundamentada como correcta era la (${p.cta}).`;
+                fb.style.backgroundColor = "#fee2e2";
+                fb.style.color = "#991b1b";
+            }
+
+            respuestasEstudiante.push({
+                materia: materiasSeleccionadas[indexMateria],
+                nivel: nivelActual,
+                correcto: esCorrecto
+            });
+
+            fb.style.display = "block";
+            document.getElementById("btn-avanzar-sig").style.display = "block";
+        }
+
+        function irASiguiente() {
+            indexPreguntaEnNivel++;
+            if (indexPreguntaEnNivel < 15) {
+                presentarPregunta();
+            } else {
+                nivelActual++;
+                procesarBloqueMateria();
+            }
+        }
+
+        function mostrarResultadosFinales() {
+            actualizarFondoFase("CONJUNTO"); 
+            document.getElementById("p3").style.display = "none";
+            document.getElementById("p-final").style.display = "block";
+
+            document.getElementById("resumen-usuario").innerHTML = `
+                <b>Estudiante:</b> ${nombreEstudiante}<br>
+                <b>Grado Escolar:</b> ${gradoEstudiante}° Grado<br>
+                <b>Edad Registrada:</b> ${edadEstudiante} años<br>
+                <b>Áreas Diagnosticadas:</b> ${materiasSeleccionadas.join(", ")}
+            `;
+
+            let desglose = document.getElementById("desglose-resultados");
+            desglose.innerHTML = "";
+
+            let conteoPorMateria = {};
+            let correctasGlobales = 0;
+
+            respuestasEstudiante.forEach(r => {
+                if (!conteoPorMateria[r.materia]) {
+                    conteoPorMateria[r.materia] = { correctas: 0, total: 0 };
+                }
+                conteoPorMateria[r.materia].total++;
+                if (r.correcto) {
+                    conteoPorMateria[r.materia].correctas++;
+                    correctasGlobales++;
+                }
+            });
+
+            for (let m in conteoPorMateria) {
+                let porcentaje = ((conteoPorMateria[m].correctas / conteoPorMateria[m].total) * 100).toFixed(1);
+                desglose.innerHTML += `<p style="margin-bottom:8px;"><b>${m}:</b> Identificado un ${porcentaje}% de respuestas correctas acumuladas totales.</p>`;
+            }
+
+            document.getElementById("puntaje-total-global").innerText = 
+                `Total Aciertos Globales: ${correctasGlobales} de ${respuestasEstudiante.length} preguntas respondidas.`;
+        }
+    </script>
+</body>
+</html>
