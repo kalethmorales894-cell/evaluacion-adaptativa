@@ -3,225 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Evaluación Adaptativa Escolar</title>
-    
-    <meta name="description" content="Plataforma interactiva de diagnóstico escolar y orientación vocacional. Evalúa tus conocimientos de forma adaptativa por asignaturas.">
+    <title>Plataforma Multidisciplinaria de Evaluación Adaptativa</title>
+    <meta name="description" content="Sistema interactivo de diagnóstico escolar de tres niveles: Fácil, Difícil y Extremo.">
     <meta name="robots" content="index, follow">
-
     <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 15px;
-            transition: background 1.5s ease-in-out;
-            background: #0f172a;
-        }
-
-        #fondo-animado {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .panel {
-            position: relative;
-            z-index: 10;
-            background-color: rgba(255, 255, 255, 0.94);
-            border-radius: 16px;
-            padding: 22px 18px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
-            width: 100%;
-            max-width: 650px;
-            text-align: center;
-            color: #1e293b;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: all 0.3s ease;
-            max-height: 92vh;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-
-        .panel::-webkit-scrollbar {
-            width: 6px;
-        }
-        .panel::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1;
-            border-radius: 3px;
-        }
-
-        @media (min-width: 768px) {
-            .panel { 
-                padding: 35px 40px; 
-                max-height: 85vh;
-            }
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { width: 100%; height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; background: #0f172a; }
+        #fondo-animado { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+        .panel { position: relative; z-index: 10; background-color: rgba(255, 255, 255, 0.94); border-radius: 16px; padding: 22px 18px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45); width: 100%; max-width: 700px; text-align: center; color: #1e293b; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); max-height: 92vh; overflow-y: auto; border: 1px solid rgba(255, 255, 255, 0.5); }
+        .panel::-webkit-scrollbar { width: 6px; }
+        .panel::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 3px; }
         h1 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 700; color: #0f172a; }
         h2 { font-size: 1.2rem; margin-bottom: 10px; color: #1e3a8a; }
         p { font-size: 0.95rem; line-height: 1.5; margin-bottom: 18px; color: #334155; }
-
-        @media (min-width: 768px) {
-            h1 { font-size: 1.75rem; }
-            h2 { font-size: 1.35rem; }
-            p { font-size: 1rem; }
-        }
-
-        .btn-interactivo {
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            font-size: 1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
-            transition: all 0.2s ease;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        @media (min-width: 480px) {
-            .btn-interactivo { width: auto; padding: 13px 35px; font-size: 1.05rem; }
-        }
-        .btn-interactivo:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.6);
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        }
-
-        .tabla-ingreso {
-            width: 100%;
-            margin: 15px 0;
-            border-collapse: collapse;
-        }
-        .tabla-ingreso tr {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-        }
-        .tabla-ingreso td {
-            padding: 3px 0;
-            text-align: left;
-            width: 100%;
-        }
-        @media (min-width: 576px) {
-            .tabla-ingreso tr { display: table-row; }
-            .tabla-ingreso td { padding: 8px 5px; display: table-cell; }
-            .tabla-ingreso td:first-child { width: 35%; }
-        }
-
-        .input-campo {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .input-campo:focus {
-            border-color: #2563eb;
-        }
-
-        .bloque-materias {
-            border: 2px dashed #3b82f6;
-            border-radius: 12px;
-            padding: 14px;
-            background-color: #f8fafc;
-            margin-top: 12px;
-        }
-        .grid-materias {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-            text-align: left;
-            margin-top: 8px;
-        }
-        @media (min-width: 420px) {
-            .grid-materias { grid-template-columns: 1fr 1fr; }
-        }
-
-        .grid-materias label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.95rem;
-            cursor: pointer;
-        }
-
-        .sub-bloque {
-            margin-top: 10px;
-            padding-left: 15px;
-            border-left: 4px solid #10b981;
-            display: none;
-            grid-template-columns: 1fr;
-            gap: 6px;
-            text-align: left;
-        }
-
-        .texto-guia {
-            background-color: #f1f5f9;
-            border-left: 5px solid #2563eb;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: left;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            color: #334155;
-            max-height: 90px;
-            overflow-y: auto;
-        }
-
-        .opciones-lista {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin: 15px 0;
-        }
-        .btn-opc {
-            background-color: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 11px 14px;
-            text-align: left;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-        }
-        .btn-opc:hover { background-color: #f1f5f9; transform: translateX(3px); border-color: #cbd5e1; }
-
-        .alerta-feedback {
-            font-size: 0.95rem;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 12px;
-            display: none;
-        }
+        @media (min-width: 768px) { .panel { padding: 35px 40px; max-height: 85vh; } h1 { font-size: 1.75rem; } h2 { font-size: 1.35rem; } }
+        .btn-interactivo { background: linear-gradient(135deg, #1d4ed8, #1e40af); color: white; border: none; padding: 12px 28px; font-size: 1rem; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4); transition: all 0.2s; width: 100%; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-interactivo:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(29, 78, 216, 0.6); background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .grid-materias { display: grid; grid-template-columns: 1fr; gap: 8px; text-align: left; margin: 15px 0; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #cbd5e1; max-height: 200px; overflow-y: auto; }
+        @media (min-width: 500px) { .grid-materias { grid-template-columns: 1fr 1fr; } }
+        .grid-materias label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.2s; }
+        .grid-materias label:hover { background-color: #e2e8f0; }
+        .texto-guia { background-color: #f1f5f9; border-left: 5px solid #2563eb; padding: 10px; border-radius: 4px; text-align: left; font-size: 0.9rem; margin-bottom: 15px; }
+        .opciones-lista { display: flex; flex-direction: column; gap: 8px; margin: 15px 0; }
+        .btn-opc { background-color: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 11px 14px; text-align: left; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; width: 100%; }
+        .btn-opc:hover { background-color: #f1f5f9; transform: translateX(3px); }
+        .alerta-feedback { font-size: 0.95rem; font-weight: bold; padding: 10px; border-radius: 6px; margin-top: 12px; display: none; }
+        .badge-nivel { padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; color: white; text-transform: uppercase; }
+        .nv-facil { background-color: #10b981; }
+        .nv-dificil { background-color: #f59e0b; }
+        .nv-extremo { background-color: #ef4444; }
+        .input-formulario { width: 100%; padding: 8px; margin-top: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
@@ -229,467 +41,549 @@
     <canvas id="fondo-animado"></canvas>
 
     <div id="p1" class="panel">
-        <h1>Plataforma Vocacional de Diagnóstico Escolar</h1>
-        <p style="text-align: justify;">
-            Este espacio digital interactivo ha sido desarrollado con el firme propósito de explorar e identificar cuáles son las verdaderas inclinaciones, gustos e intereses de los estudiantes. Evaluando de manera adaptativa el desempeño en diversas áreas del conocimiento, buscamos descubrir perfiles de afinidad vocacional para guiar tu futuro educativo.
-        </p>
-        <button class="btn-interactivo" onclick="irAPagina2()">Inicio</button>
+        <h1>Evaluación de Competencias de Tres Niveles</h1>
+        <p>Explora tus capacidades a través de desafíos adaptados en niveles Fácil, Difícil y Extremo para consolidar tu diagnóstico académico y vocacional.</p>
+        <button class="btn-interactivo" onclick="irAPagina2()">Ingresar</button>
     </div>
 
     <div id="p2" class="panel" style="display: none;">
-        <h2>Formulario de Ingreso</h2>
-        <table class="tabla-ingreso">
-            <tr>
-                <td><label><b>Nombre Completo:</b></label></td>
-                <td><input type="text" id="reg-nombre" class="input-campo" placeholder="Escriba su nombre"></td>
-            </tr>
-            <tr>
-                <td><label><b>Grado Escolar (1 a 11):</b></label></td>
-                <td><input type="number" id="reg-grado" class="input-campo" min="1" max="11" placeholder="Ej: 11"></td>
-            </tr>
-            <tr>
-                <td><label><b>Edad (Años):</b></label></td>
-                <td><input type="number" id="reg-edad" class="input-campo" min="5" max="99" placeholder="Ej: 16"></td>
-            </tr>
-        </table>
-
-        <div class="bloque-materias">
-            <p style="margin-top:0; font-weight:bold; text-align:left;">Seleccione las Asignaturas a Evaluar:</p>
-            <div class="grid-materias">
-                <label><input type="checkbox" name="m-sel" value="Informática"> Informática</label>
-                <label><input type="checkbox" name="m-sel" value="Matemáticas"> Matemáticas</label>
-                <label><input type="checkbox" name="m-sel" value="Español"> Español</label>
-                <label><input type="checkbox" name="m-sel" value="Sociales"> Sociales</label>
-                <label><input type="checkbox" id="chk-cc" onchange="toggleCubiculo()"> 🧪 Ciencias Naturales</label>
-            </div>
-            <div id="sub-cc" class="sub-bloque">
-                <label><input type="checkbox" name="m-sel" value="Física"> Física</label>
-                <label><input type="checkbox" name="m-sel" value="Química"> Química</label>
-                <label><input type="checkbox" name="m-sel" value="Biología"> Biología</label>
-            </div>
+        <h2>Configuración del Diagnóstico</h2>
+        <div style="margin: 10px 0; text-align: left;">
+            <label><b>Nombre Completo (Solo letras):</b></label>
+            <input type="text" id="reg-nombre" class="input-formulario" placeholder="Ej. Juan Pérez"><br><br>
+            
+            <label><b>Grado Escolar (Máximo 11):</b></label>
+            <input type="number" id="reg-grado" class="input-formulario" min="1" max="11" placeholder="Ej. 11"><br><br>
+            
+            <label><b>Edad (Años):</b></label>
+            <input type="number" id="reg-edad" class="input-formulario" min="1" placeholder="Ej. 16"><br><br>
         </div>
-        <button class="btn-interactivo" onclick="configurarPrueba()">Ingresar al Sistema</button>
+        <p style="text-align: left; font-weight: bold; margin-bottom: 5px;">Selecciona las materias a evaluar:</p>
+        <div class="grid-materias" id="contenedor-checkboxes"></div>
+        <button class="btn-interactivo" onclick="configurarPrueba()">Iniciar Evaluación</button>
     </div>
 
     <div id="p-nivel" class="panel" style="display: none;">
-        <h1 id="lbl-anuncio-materia">Asignatura</h1>
-        <h2 id="lbl-anuncio-nivel" style="color: #1d4ed8;">Nivel</h2>
-        <p id="lbl-anuncio-grado" style="font-weight: bold; color: #475569;"></p>
-        <button id="btn-comenzar-nivel" class="btn-interactivo">Comenzar Nivel</button>
+        <h1 id="lbl-anuncio-materia">Materia</h1>
+        <div style="margin: 15px 0;"><span id="badge-dinamico" class="badge-nivel">Nivel</span></div>
+        <p id="lbl-anuncio-detalles"></p>
+        <button id="btn-comenzar-nivel" class="btn-interactivo">Empezar Bloque</button>
     </div>
 
     <div id="p3" class="panel" style="display: none;">
         <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:bold; font-size: 0.85rem;">
             <span id="txt-materia-act">Materia</span>
-            <span id="txt-progreso-act">Pregunta 0/5</span>
+            <span id="txt-progreso-act">Pregunta 0/15</span>
         </div>
         <div id="lectura-contexto" class="texto-guia"></div>
         <p id="enunciado-pregunta" style="font-size:1.05rem; font-weight:600; text-align:left; margin-bottom: 15px;"></p>
         
         <div class="opciones-lista">
-            <button class="btn-opc" onclick="procesarRespuesta('A')"><b>A)</b> <span id="lbl-opcA"></span></button>
-            <button class="btn-opc" onclick="procesarRespuesta('B')"><b>B)</b> <span id="lbl-opcB"></span></button>
-            <button class="btn-opc" onclick="procesarRespuesta('C')"><b>C)</b> <span id="lbl-opcC"></span></button>
-            <button class="btn-opc" onclick="procesarRespuesta('D')"><b>D)</b> <span id="lbl-opcD"></span></button>
+            <button class="btn-opc" onclick="procesarRespuesta(0)"><b>A)</b> <span id="lbl-opcA"></span></button>
+            <button class="btn-opc" onclick="procesarRespuesta(1)"><b>B)</b> <span id="lbl-opcB"></span></button>
+            <button class="btn-opc" onclick="procesarRespuesta(2)"><b>C)</b> <span id="lbl-opcC"></span></button>
+            <button class="btn-opc" onclick="procesarRespuesta(3)"><b>D)</b> <span id="lbl-opcD"></span></button>
         </div>
-
         <div id="box-fb" class="alerta-feedback"></div>
-        <button id="btn-avanzar-sig" class="btn-interactivo" style="display:none; width: 100%;" onclick="irASiguiente()">Siguiente Pregunta</button>
+        <button id="btn-avanzar-sig" class="btn-interactivo" style="display:none; width: 100%; margin-top:10px;" onclick="irASiguiente()">Siguiente Pregunta</button>
     </div>
 
     <div id="p-final" class="panel" style="display: none;">
-        <h1>Diagnóstico Vocacional Final</h1>
-        <p id="resumen-usuario" style="text-align:left; font-size:0.95rem;"></p>
-        <div id="desglose-resultados" style="text-align:left; margin:15px 0; max-height:160px; overflow-y:auto; padding:10px; border:1px solid #cbd5e1; border-radius:8px; background-color: #fff;"></div>
-        <h3 id="puntaje-total-global" style="font-size:1.1rem; color:#10b981; margin-bottom: 15px;"></h3>
-        <a href="https://www.facebook.com" target="_blank" class="btn-interactivo" style="background: #1877f2; text-decoration:none; text-align:center; display:block; line-height:24px;">Ir a Facebook</a>
+        <h1>Reporte Avanzado de Desempeño</h1>
+        <div id="desglose-resultados" style="text-align:left; margin:15px 0; padding:10px; background:#fff; border-radius:8px; border:1px solid #cbd5e1;"></div>
+        <button class="btn-interactivo" onclick="location.reload()">Reiniciar Sistema</button>
     </div>
 
     <script>
         const CANVAS = document.getElementById("fondo-animado");
         const CTX = CANVAS.getContext("2d");
         let particulas = [];
-        let modoFondoActual = "CONJUNTO";
-
-        const SIMBOLOS_MATERIAS = {
-            "Informática": ["💻", "⚙️", "0110", "{}", "kali", "⌨️"],
-            "Matemáticas": ["∑", "√x", "π", "∞", "x²", "∫"],
-            "Español": ["📖", "Aa", "✒️", "✍️", "📜"],
-            "Sociales": ["🗺️", "🌍", "🏛️", "⚖️"],
-            "Física": ["E=mc²", "v=d/t", "F=ma", "⚛️", "Ω"],
-            "Química": ["H2O", "NaCl", "HCl", "pH", "🧪"],
-            "Biología": ["ADN", "🧫", "🔬", "🌿", "Cell"]
-        };
-
-        const GRADIENTES_FONDO = {
-            "CONJUNTO": ["#0f172a", "#1e3a8a", "#0f172a"],
-            "INFORMÁTICA": ["#1e1035", "#3c166d", "#0c041a"],
-            "MATEMÁTICAS": ["#2e1405", "#662203", "#140700"],
-            "ESPAÑOL": ["#2b1b04", "#5c3a07", "#170e01"],
-            "SOCIALES": ["#1c1917", "#3f3f46", "#0c0a09"],
-            "FÍSICA": ["#0c4a6e", "#0369a1", "#042f44"],
-            "QUÍMICA": ["#064e3b", "#0f766e", "#042f2e"],
-            "BIOLOGÍA": ["#052e16", "#14532d", "#02170b"]
-        };
-
-        class ParticulaSimbolo {
-            constructor(simbolo, fuerzaX, fuerzaY) {
-                this.simbolo = simbolo;
-                this.x = Math.random() * CANVAS.width;
-                this.y = Math.random() * CANVAS.height + CANVAS.height;
-                this.size = Math.random() * 14 + 14;
-                this.speedX = (Math.random() - 0.5) * fuerzaX;
-                this.speedY = -(Math.random() * fuerzaY + 0.4);
-                this.alpha = Math.random() * 0.4 + 0.15;
-                this.rotation = Math.random() * Math.PI;
-                this.rotSpeed = (Math.random() - 0.5) * 0.01;
-            }
-            actualizar() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.rotation += this.rotSpeed;
-                if (this.x < -50) this.x = CANVAS.width + 50;
-                if (this.x > CANVAS.width + 50) this.x = -50;
-                if (this.y < -50) {
-                    this.y = CANVAS.height + 50;
-                    this.x = Math.random() * CANVAS.width;
-                }
-            }
-            dibujar() {
-                CTX.save();
-                CTX.translate(this.x, this.y);
-                CTX.rotate(this.rotation);
-                CTX.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-                CTX.font = `bold ${this.size}px monospace`;
-                CTX.fillText(this.simbolo, 0, 0);
-                CTX.restore();
-            }
-        }
-
-        function ajustarDimensionesPantalla() {
+        
+        function redimensionarCanvas() {
             CANVAS.width = window.innerWidth;
             CANVAS.height = window.innerHeight;
-            reestatizarFondoParticulas();
+        }
+        window.addEventListener('resize', redimensionarCanvas);
+        redimensionarCanvas();
+
+        class Particula {
+            constructor() {
+                this.x = Math.random() * CANVAS.width;
+                this.y = Math.random() * CANVAS.height;
+                this.r = Math.random() * 2 + 1;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+            }
+            dibujar() {
+                CTX.beginPath();
+                CTX.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                CTX.fillStyle = "rgba(255, 255, 255, 0.15)";
+                CTX.fill();
+            }
+            mover() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > CANVAS.width) this.vx *= -1;
+                if (this.y < 0 || this.y > CANVAS.height) this.vy *= -1;
+            }
         }
 
-        function reestatizarFondoParticulas() {
-            particulas = [];
-            let poolSimbolos = [];
-            let fx = 0.8, fy = 1.2;
+        for (let i = 0; i < 40; i++) { particulas.push(new Particula()); }
 
-            if (modoFondoActual === "CONJUNTO") {
-                Object.values(SIMBOLOS_MATERIAS).forEach(arr => { poolSimbolos = poolSimbolos.concat(arr); });
-                fx = 0.9; fy = 1.0;
-            } else {
-                poolSimbolos = SIMBOLOS_MATERIAS[modoFondoActual] || ["?"];
-            }
-
-            let totalParticulas = Math.min(65, Math.floor((CANVAS.width * CANVAS.height) / 18000));
-            if(totalParticulas < 20) totalParticulas = 25;
-
-            for (let i = 0; i < totalParticulas; i++) {
-                let ranSimbolo = poolSimbolos[Math.floor(Math.random() * poolSimbolos.length)];
-                let p = new ParticulaSimbolo(ranSimbolo, fx, fy);
-                p.y = Math.random() * CANVAS.height;
-                particulas.push(p);
-            }
-        }
-
-        function bucleAnimacionFondo() {
+        function animar() {
             CTX.clearRect(0, 0, CANVAS.width, CANVAS.height);
-            let claveGrad = modoFondoActual === "CONJUNTO" ? "CONJUNTO" : modoFondoActual.toUpperCase().replace(/\s+/g, '');
-            let colores = GRADIENTES_FONDO[claveGrad] || GRADIENTES_FONDO["CONJUNTO"];
-            
-            let grad = CTX.createLinearGradient(0, 0, CANVAS.width, CANVAS.height);
-            grad.addColorStop(0, colores[0]);
-            grad.addColorStop(0.5, colores[1]);
-            grad.addColorStop(1, colores[2]);
-            CTX.fillStyle = grad;
+            CTX.fillStyle = "#0f172a"; 
             CTX.fillRect(0, 0, CANVAS.width, CANVAS.height);
-
-            for (let i = 0; i < particulas.length; i++) {
-                particulas[i].actualizar();
-                particulas[i].dibujar();
-            }
-            requestAnimationFrame(bucleAnimacionFondo);
+            particulas.forEach(p => { p.mover(); p.dibujar(); });
+            requestAnimationFrame(animar);
         }
+        animar();
 
-        window.addEventListener('resize', ajustarDimensionesPantalla);
-        window.addEventListener('DOMContentLoaded', () => {
-            ajustarDimensionesPantalla();
-            requestAnimationFrame(bucleAnimacionFondo);
-        });
+        // Lista oficial de asignaturas corregida (sin Educación Tecnológica)
+        const ASIGNATURAS_LISTA = [
+            "Matemática", "Lengua y Literatura", "Informática", "Formación Ética y Ciudadana", "Educación Física",
+            "Lengua Extranjera (inglés)", "Historia", "Geografía", "Biología", "Física y Química", 
+            "Música", "Artes Visuales", "Teatro", "Dibujo y Composición Visual"
+        ];
 
-        function actualizarFondoFase(materia) {
-            modoFondoActual = materia;
-            reestatizarFondoParticulas();
-        }
-
-        // NUEVO BANCO DE PREGUNTAS DINÁMICAS, VARIADAS Y SIN TEXTOS SIVILINOS DELATADORES
-        const bancoMaestro = {
+        // Bancos de datos completamente separados e independientes por materia
+        const semillasAcademicas = {
+            "Matemática": {
+                1: {
+                    conceptos: ["el cálculo de 5x5", "el valor de un ángulo recto", "el resultado de 10 - 3", "el primer número primo", "el número de lados de un triángulo", "el resultado de la raíz cuadrada de 9", "el número que representa una docena", "el resultado de 15 dividido entre 3", "el valor absoluto de -8", "el número que sigue en la serie 2, 4, 6...", "el resultado de sumar 1/2 más 1/2", "el número de minutos en una hora", "el resultado de 100 multiplicado por 0", "el perímetro de un cuadrado de lado 2cm", "el resultado de 50 menos 25"],
+                    respuestas: ["Veinticinco", "Noventa grados", "Siete", "El número dos", "Tres lados", "Tres", "Doce unidades", "Cinco", "Ocho positivo", "El número ocho", "Un entero completo", "Sesenta minutos", "Cero", "Ocho centímetros", "Veinticinco unidades"]
+                },
+                2: {
+                    conceptos: ["el teorema de Pitágoras", "el área de un rectángulo", "la propiedad distributiva", "el concepto de una ecuación", "el resultado de 12 multiplicado por 12", "la definición de un número entero", "el valor de la pendiente de una recta horizontal", "la función del eje x en el plano cartesiano", "el resultado de la raíz cúbica de 64", "la mitad de 150", "el mínimo común múltiplo de 4 y 6", "el resultado de 5 elevado al cubo", "el número de grados en una circunferencia completa", "la definición de un triángulo isósceles", "el resultado de restar 100 menos 35"],
+                    respuestas: ["La relación entre catetos e hipotenusa", "Base multiplicada por la altura", "Multiplicar un número por una suma", "Una igualdad con una incógnita", "Ciento cuarenta y cuatro", "Un número sin parte decimal", "Cero absoluto de inclinación", "Representar las abscisas horizontales", "Cuatro", "Setenta y cinco", "Doce", "Ciento veinticinco", "Trescientos sesenta grados", "Dos lados iguales y uno diferente", "Sesenta y cinco"]
+                },
+                3: {
+                    conceptos: ["la definición de una derivada", "el cálculo de un límite indeterminado", "la integral definida", "la matriz identidad", "una progresión geométrica", "el determinante de una matriz", "el valor del número pi", "la definición de vectores ortogonales", "el teorema fundamental del cálculo", "un número complejo", "la optimización de funciones", "la combinación sin repetición", "una asíntota vertical", "la regla de L'Hôpital", "la convergencia de una serie"],
+                    respuestas: ["La razón de cambio instantánea", "Aproximación usando factorización o leyes", "El área exacta bajo una curva", "Matriz con unos en la diagonal principal", "Sucesión donde se multiplica por una razón", "Un valor numérico escalar de una matriz cuadrada", "Tres punto catorce dieciséis", "Vectores cuyo producto escalar es cero", "Conexión directa entre derivación e integración", "Unión de parte real e imaginaria", "Búsqueda de máximos y mínimos", "Selección de elementos sin importar el orden", "Línea donde la función tiende al infinito", "Derivar numerador y denominador en indeterminaciones", "Suma de infinitos términos que da un valor fijo"]
+                }
+            },
+            "Lengua y Literatura": {
+                1: {
+                    conceptos: ["las palabras agudas", "el sujeto de una oración", "los sinónimos", "el sustantivo propio", "el punto final", "las palabras graves", "el antónimo de luz", "los textos informativos", "el núcleo del predicado", "las fábulas", "el uso de los signos de interrogación", "un sustantivo común", "las palabras esdrújulas", "el abecedario", "el uso de las mayúsculas"],
+                    respuestas: ["Llevan el acento en la última sílaba", "Quién realiza la acción verbal", "Palabras con significados similares", "Nombre específico de persona o lugar", "Signo que cierra un texto completo", "Llevan el acento en la penúltima sílaba", "Oscuridad", "Transmiten hechos reales objetivamente", "Siempre es un verbo conjugado", "Relatos breves con moraleja final", "Se usan para formular preguntas", "Persona, animal o cosa genérica", "Llevan el acento en la antepenúltima sílaba", "Conjunto ordenado de letras", "Se colocan al iniciar una oración"]
+                },
+                2: {
+                    conceptos: ["el objeto directo", "la metáfora", "el narrador testigo", "el diptongo", "un texto argumentativo", "la función apelativa del lenguaje", "el género dramático", "un hiato", "la coherence textual", "el subgénero de la novela", "la crónica literaria", "el uso del punto y coma", "los conectores de oposición", "el sujeto tácito", "la personificación"],
+                    respuestas: ["Elemento que recibe directamente la acción", "Identificación poética entre dos términos", "Cuenta la historia desde adentro sin ser protagonista", "Dos vocales juntas en la misma sílaba", "Texto que busca convencer o persuadir", "Intenta llamar la atención del receptor", "Obras creadas para ser representadas en teatro", "Dos vocales juntas que se separan en sílabas", "Unidad de sentido e ideas claras en un texto", "Narración extensa escrita en prosa", "Relato histórico ordenado cronológicamente", "Indica una pausa intermedia en enumeraciones", "Palabras como sin embargo o pero", "Sujeto que no aparece escrito pero se entiende", "Atribuir cualidades humanas a objetos"]
+                },
+                3: {
+                    conceptos: ["el Modernismo", "la deconstrucción textual", "el monólogo interior", "la intertextualidad", "la función metalingüística", "el hipérbaton", "la polifonía", "la semiótica", "el género de la tragedia clásica", "la cohesión léxica", "el vanguardismo", "el gongorismo literario", "el Realismo mágico", "el culteranismo", "la denotación de una palabra"],
+                    respuestas: ["Movimiento de Rubén Darío con renovación estética", "Análisis crítico que desarma estructuras ocultas", "Flujo libre del pensamiento de un personaje", "Relación directa de un texto con otro anterior", "Uso del lenguaje para hablar del propio lenguaje", "Alteración del orden lógico de las palabras", "Presencia de múltiples voces en una novela", "Estudio de los signos en la comunicación humana", "Obra con desenlace fatal y purificación o catarsis", "Vínculo de términos mediante repeticiones o sinónimos", "Ruptura radical con las normas artísticas tradicionales", "Estilo caracterizado por la complejidad extrema del Barroco", "Inclusión de elementos fantásticos como algo cotidiano", "Uso de neologismos y metáforas cultas complejas", "Significado literal y objetivo de un diccionario"]
+                }
+            },
             "Informática": {
-                1: [
-                    { t: "Arquitectura Física de Sistemas", q: "¿Cuál de los siguientes componentes se considera el 'cerebro' físico de una computadora, encargado de ejecutar las instrucciones de los programas?", a: "La memoria RAM estática", b: "La Unidad Central de Procesamiento (CPU)", c: "El disco de estado sólido (SSD)", d: "La tarjeta madre o placa base", cta: "B" },
-                    { t: "Herramientas de Ofimática", q: "¿Qué es Microsoft Word dentro del ecosistema informático estándar?", a: "Un sistema operativo de código abierto", b: "Un gestor de bases de datos relacionales", c: "Un software procesador de textos", d: "Un navegador web de alta velocidad", cta: "C" },
-                    { t: "Estructuras de la Red", q: "¿Qué es un directorio web en el ámbito del internet?", a: "Una base de datos que organiza enlaces de sitios web por categorías", b: "Un cable físico submarino de fibra óptica", c: "Un comando de consola para borrar archivos", d: "Un protocolo de asignación de direcciones IP", cta: "A" },
-                    { t: "Almacenamiento de Datos", q: "¿Qué tipo de memoria pierde toda su información guardada inmediatamente al apagar el equipo informático?", a: "Memoria ROM", b: "Disco Duro Mecánico", c: "Memoria RAM", d: "Memoria Flash USB", cta: "C" },
-                    { t: "Sistemas Operativos", q: "¿Cuál es la función principal del Kernel o núcleo en un sistema operativo como Linux o Windows?", a: "Diseñar las interfaces gráficas y las ventanas", b: "Administrar los recursos de hardware y la comunicación con el software", c: "Escanear y eliminar virus informáticos", d: "Optimizar la velocidad de la navegación web", cta: "B" }
-                ]
+                1: {
+                    conceptos: ["el hardware", "el software", "el mouse o ratón", "el teclado", "el monitor o pantalla", "la función del botón de encendido", "un archivo digital", "el internet", "el correo electrónico", "una contraseña", "el navegador web", "la carpeta digital", "el puerto USB", "la impresora", "el almacenamiento en la nube"],
+                    respuestas: ["Componentes físicos y tangibles de la computadora", "Programas, aplicaciones y sistema lógico de un equipo", "Dispositivo apuntador para desplazar el cursor", "Periférico de entrada para introducir texto y comandos", "Muestra la interfaz gráfica y visual al usuario", "Iniciar el suministro eléctrico y arrancar el equipo", "Documento con datos específicos guardado en un disco", "Red informática mundial y global de computadoras conectadas", "Sistema de mensajería asincrónica electrónica", "Clave secreta de seguridad para validar accesos", "Aplicación que interpreta código para visitar páginas web", "Contenedor virtual para organizar y agrupar archivos", "Puerto estándar de conexión para periféricos comunes", "Dispositivo periférico que plasma texto o imágenes en papel", "Guardar información de forma remota en servidores de internet"]
+                },
+                2: {
+                    conceptos: ["la memoria RAM", "el procesador o CPU", "el sistema operativo", "un virus informático", "un disco de estado sólido o SSD", "una dirección IP", "la memoria ROM", "un algoritmo", "una red LAN", "el ancho de banda", "un software antivirus", "la memoria caché", "la extensión de archivo .exe", "un controlador o driver", "el protocolo HTTP"],
+                    respuestas: ["Almacenamiento temporal de acceso rápido para programas abiertos", "Unidad central encargada de procesar las instrucciones del sistema", "Software principal que gestiona los recursos de hardware", "Código de software malicioso diseñado para alterar sistemas", "Dispositivo electrónico de almacenamiento permanente ultra rápido", "Identificador numérico lógico asignado a un dispositivo en red", "Memoria permanente de solo lectura encargada del arranque inicial", "Serie de pasos lógicos estructurados para resolver un problema", "Red informática interna de área local y corto alcance", "Capacidad máxima de transmisión de datos por segundo en red", "Programa diseñado para detectar y eliminar software dañino", "Memoria especial intermedia extremadamente rápida de la CPU", "Formato de archivo binario ejecutable en sistemas operativos", "Software intermedio que comunica el sistema con un hardware", "Protocolo básico de transferencia de hipertexto en la web"]
+                },
+                3: {
+                    conceptos: ["la criptografía asimétrica", "un motor de base de datos relacional", "el modelo OSI", "la recursividad en programación", "un ataque DDoS masivo", "un compilador", "la latencia de red", "el Machine Learning", "la arquitectura de microservicios", "una clave primaria o primary key", "un puntero en desarrollo de software", "el control de versiones con Git", "un balanceador de carga", "la inyección SQL", "el protocolo TCP/IP"],
+                    respuestas: ["Método de cifrado basado en un par de claves pública y privada", "Sistema de tablas interconectadas mediante llaves lógicas", "Modelo de interconexión abstracto compuesto de siete capas", "Técnica de desarrollo donde una función se invoca a sí misma", "Ataque distribuido que satura un servidor con tráfico falso", "Programa que traduce el código fuente a lenguaje de máquina", "Tiempo de retraso exacto en la transferencia de paquetes de red", "Subcampo de la inteligencia artificial basado en patrones de datos", "Diseño de software compuesto por módulos autónomos e independientes", "Identificador único asignado a un registro dentro de una tabla", "Variable que almacena directamente una dirección de memoria física", "Herramienta que gestiona y registra el historial de cambios de código", "Dispositivo o software que distribuye el tráfico entre servidores", "Ataque que infiltra código malicioso en consultas a bases de datos", "Modelo de protocolos fundamentales sobre los que opera todo internet"]
+                }
             },
-            "Matemáticas": {
-                1: [
-                    { t: "Operaciones Aritméticas", q: "Si sumas 3/4 con 1/2, ¿cuál es el resultado simplificado de la operación?", a: "4/6", b: "5/4", c: "1", d: "3/8", cta: "B" },
-                    { t: "Ecuaciones Lineales", q: "En la ecuación matemática elemental 2x - 5 = 11, ¿cuál es el valor numérico real de la variable x?", a: "x = 3", b: "x = 6", c: "x = 8", d: "x = 16", cta: "C" },
-                    { t: "Geometría Plana", q: "¿Cómo se calcula el área total de un triángulo rectángulo en el plano?", a: "Multiplicando la base por la altura", b: "Sumando sus tres lados y dividiendo entre dos", c: "Multiplicando la base por la altura y dividiendo el resultado entre dos", d: "Elevando el valor del lado mayor al cuadrado", cta: "C" },
-                    { t: "Teoría de Números", q: "¿Cuál de los siguientes números se clasifica estrictamente como un número primo?", a: "9", b: "15", c: "2", d: "4", cta: "C" },
-                    { t: "Fracciones y Razones", q: "¿A qué porcentaje equivale exactamente la fracción decimal de 1/5?", a: "15%", b: "50%", c: "5%", d: "20%", cta: "D" }
-                ]
+            "Formación Ética y Ciudadana": {
+                1: {
+                    conceptos: ["las normas de convivencia", "los valores éticos", "un derecho humano", "el respeto mutuo", "la honestidad", "la empatía", "la solidaridad", "la igualdad", "la justicia social", "la tolerancia", "la responsabilidad", "la paz", "el diálogo", "la libertad de expresión", "la identidad"],
+                    respuestas: ["Reglas sociales para convivir pacíficamente en comunidad", "Principios que guían el comportamiento humano correcto", "Facultad inherente a toda persona por su dignidad", "Consideración y valoración hacia las demás personas", "Actuar siempre con la verdad y rectitud", "Capacidad de comprender los sentimientos ajenos", "Apoyo e interés incondicional ante causas ajenas", "Mismo trato y oportunidades para todas las personas", "Equilibrio colectivo en el acceso a necesidades fundamentales", "Respetar las opiniones y prácticas distintas a las propias", "Cumplimiento integral de las obligaciones personales", "Estado de armonía y ausencia de conflictos violentos", "Herramienta de comunicación verbal para resolver diferencias", "Derecho a manifestar libremente los propios pensamientos", "Rasgos y datos particulares que definen a un individuo"]
+                },
+                2: {
+                    conceptos: ["la Constitución Nacional", "la democracia representativa", "los tres poderes del Estado", "un partido político", "el sufragio universal", "los derechos civiles", "la soberanía popular", "los convenios internacionales", "la discriminación", "los deberes ciudadanos", "la participación comunitaria", "el bien común", "el Estado de Derecho", "la transparencia pública", "la equidad de género"],
+                    respuestas: ["Ley fundamental que organiza jurídica y políticamente un país", "Sistema donde el pueblo elige a sus gobernantes", "Poder Ejecutivo, Legislativo y Judicial independientes", "Organización civil que busca acceder al gobierno", "Derecho al voto sin exclusiones de ningún tipo", "Garantías que protegen las libertades individuales básicas", "Principio donde el poder reside en la ciudadanía", "Acuerdos legales firmados entre distintas naciones", "Trato desigual y desfavorable a determinados grupos sociales", "Obligaciones legales e individuales que impone la ley", "Acción colectiva para mejorar el entorno barrial o social", "Conjunto de condiciones óptimas para todos los ciudadanos", "Principio donde las leyes rigen sobre gobernantes y gobernados", "Acceso libre a los actos de gestión gubernamental", "Igualdad de derechos específicos entre hombres y mujeres"]
+                },
+                3: {
+                    conceptos: ["los delitos de lesa humanidad", "el neoconstitucionalismo", "la bioética contemporánea", "la objeción de conciencia", "el pluralismo hegemónico", "el clientelismo político", "los mecanismos de democracia directa", "la carta democrática", "el iusnaturalismo moderno", "la justicia restaurativa", "la soberanía digital", "la alienación cívica", "la gobernanza global", "la ética de la responsabilidad", "la desobediencia civil"],
+                    respuestas: ["Atrocidades cometidas a gran escala contra poblaciones civiles", "Corriente jurídica que prioriza principios constitucionales sobre leyes", "Estudio de dilemas éticos surgidos del avance médico", "Derecho a negarse a cumplir leyes opuestas a la moral propia", "Dominio cultural disfrazado de coexistencia multicultural", "Intercambio de favores públicos por votos u apoyos", "Iniciativas ciudadanas como el plebiscito y referéndum", "Tratado para preservar la institucionalidad en América", "Teoría jurídica basada en derechos naturales inherentes", "Modelo penal enfocado en reparar daños a la víctima", "Control estatal sobre datos e infraestructuras tecnológicas", "Pérdida de interés e implicación en asuntos públicos", "Cooperación internacional para regular problemas de escala mundial", "Corriente ética que pondera las consecuencias de cada acto", "Acción pacífica de ruptura legal frente a injusticias"]
+                }
             },
-            "Español": {
-                1: [
-                    { t: "Lingüística y Fonética", q: "¿Cómo se definen las palabras homófonas en nuestro idioma?", a: "Palabras que se escriben igual pero tienen significados opuestos", b: "Palabras que suenan exactamente igual pero tienen diferente escritura y significado", c: "Palabras que expresan sentimientos de manera exagerada", d: "Palabras que modifican directamente la acción del verbo", cta: "B" },
-                    { t: "Ortografía General", q: "¿Cuál de las siguientes palabras está escrita con la acentuación ortográfica correcta según las reglas de las palabras agudas?", a: "Cancion", b: "Árbol", c: "Canción", d: "Mesa", cta: "C" },
-                    { t: "Géneros Literarios", q: "Un texto escrito en prosa, de gran extensión, que narra historias complejas con personajes y tramas cruzadas es:", a: "Un poema lírico", b: "Una novela", c: "Un ensayo científico", d: "Una fábula corta", cta: "B" },
-                    { t: "Semántica", q: "¿Cuál es el antónimo directo y exacto de la palabra 'Efímero'?", a: "Breve", b: "Pasajero", c: "Duradero", d: "Débil", cta: "C" },
-                    { t: "Sintaxis de la Oración", q: "En la oración 'El viejo reloj de la torre suena fuerte', ¿cuál es el núcleo del sujeto?", a: "Viejo", b: "Torre", c: "Suena", d: "Reloj", cta: "D" }
-                ]
+            "Educación Física": {
+                1: {
+                    conceptos: ["el calentamiento previo", "la hidratación constante", "el ritmo cardíaco", "el estiramiento neuromuscular", "la resistencia aeróbica", "la velocidad", "la flexibilidad", "el equilibrio", "la fuerza muscular", "el trote continuo", "los juegos recreativos", "el pase de pelota", "el calzado deportivo", "la postura corporal", "el descanso post-esfuerzo"],
+                    respuestas: ["Ejercicios suaves para preparar los músculos ante esfuerzos", "Reposición constante de líquidos antes y durante la actividad", "Frecuencia o cantidad de latidos del corazón por minuto", "Acción de elongar músculos para evitar lesiones futuras", "Capacidad de soportar un esfuerzo de larga duración", "Capacidad de realizar un movimiento en menor tiempo", "Capacidad de las articulaciones para realizar amplitudes máximas", "Habilidad para mantener el cuerpo en posición estable", "Capacidad del músculo para vencer una resistencia externa", "Carrera a paso moderado y ritmo totalmente constante", "Actividades lúdicas grupales orientadas al esparcimiento voluntario", "Acción técnica de enviar el balón a un compañero", "Zapatillas diseñadas para amortiguar impactos en el suelo", "Alineación correcta de la columna durante el ejercicio", "Periodo necesario de recuperación biológica tras el ejercicio"]
+                },
+                2: {
+                    conceptos: ["la frecuencia cardíaca máxima", "el consumo de oxígeno o VO2 máx", "el entrenamiento interválico", "la contracción isométrica", "la capacidad anaeróbica", "el ácido láctico", "la hipertrofia muscular", "el umbral aeróbico", "la propiocepción activa", "los deportes colectivos", "el test de Cooper", "la coordinación óculo-manual", "los carbohidratos complejos", "el índice de masa corporal", "la fatiga muscular"],
+                    respuestas: ["Límite teórico de latidos alcanzable en esfuerzos extremos", "Volumen máximo de oxígeno que el cuerpo puede procesar", "Método alternado de ráfagas intensas y descansos breves", "Contracción muscular sin variación de longitud del músculo", "Esfuerzos muy intensos realizados con ausencia de oxígeno", "Subproducto metabólico generado en ejercicios de alta intensidad", "Aumento del tamaño transversal de las fibras musculares", "Punto de intensidad donde se inicia la acumulación de lactato", "Capacidad subconsciente del cuerpo de percibir su posición espacial", "Disciplinas reglamentadas con interacción de equipos rivales", "Prueba física de correr la máxima distancia en doce minutos", "Sincronía precisa entre la vista y las manos", "Combustible de absorción lenta óptimo para atletas", "Relación matemática entre el peso y la estatura", "Reducción temporal de la capacidad de rendimiento muscular"]
+                },
+                3: {
+                    conceptos: ["el metabolismo basal elevado", "el principio de sobrecarga progresiva", "la vía metabólica glucolítica", "la resíntesis de ATP", "el sobreentrenamiento crónico", "la periodización táctica", "el déficit de oxígeno inicial", "la ventana anabólica", "las fibras musculares tipo IIB", "la biomecánica deportiva", "la ergogenia nutricional", "el volumen sistólico", "el ciclo estiramiento-acortamiento", "la readaptación físico-deportiva", "la pliometría avanzada"],
+                    respuestas: ["Gasto energético mínimo en reposo absoluto de un organismo", "Incrementar gradualmente el estímulo para forzar adaptaciones", "Producción de energía degradando glucosa sin oxígeno directo", "Restauración química celular de la molécula energética principal", "Agotamiento sistémico severo por falta de descanso acumulado", "Metodología de preparación integrada basada en el juego real", "Diferencia transitoria entre oxígeno requerido y consumido", "Periodo óptimo post-esfuerzo para asimilar nutrientes musculares", "Fibras rápidas de alta potencia y rápida fatiga muscular", "Estudio de las fuerzas mecánicas aplicadas al cuerpo humano", "Sustancias permitidas destinadas a potenciar el rendimiento", "Cantidad de sangre expulsada por el ventrículo izquierdo", "Combinación secuencial de contracción excéntrica y concéntrica", "Proceso de transición entre una lesión médica y el alta competitiva", "Saltos intensos para desarrollar la fuerza explosiva muscular"]
+                }
             },
-            "Sociales": {
-                1: [
-                    { t: "Geografía Política", q: "¿Cuál es la línea imaginaria horizontal que divide la Tierra exactamente en el Hemisferio Norte y Hemisferio Sur?", a: "El Meridiano de Greenwich", b: "El Trópico de Cáncer", c: "La Línea del Ecuador", d: "El Círculo Polar Ártico", cta: "C" },
-                    { t: "Historia Universal", q: "¿En qué año se dio inicio formal a la Revolución Francesa, hito histórico que cambió los derechos políticos de la humanidad?", a: "1492", b: "1789", c: "1810", d: "1914", cta: "B" },
-                    { t: "Demografía Global", q: "¿Cuál es el continente más poblado de todo el planeta Tierra?", a: "América", b: "África", c: "Asia", d: "Europa", cta: "C" },
-                    { t: "Organización Política", q: "¿Qué nombre recibe el sistema de gobierno donde el poder político reside en el pueblo y se ejerce mediante el voto?", a: "Monarquía Absoluta", b: "Oligarquía", c: "Dictadura Militar", d: "Democracia", cta: "D" },
-                    { t: "Geografía de Relieves", q: "¿Cuál es la cordillera montañosa más larga de todo el mundo, ubicada en Sudamérica?", a: "Los Alpes", b: "El Himalaya", c: "Los Andes", d: "Las Montañas Rocosas", cta: "C" }
-                ]
+            "Lengua Extranjera (inglés)": {
+                1: {
+                    conceptos: ["the Verb To Be", "the pronoun He", "the word Welcome", "the number Ten", "the color Blue", "the word Goodbye", "the noun Teacher", "the question Word What", "the singular noun Apple", "the word Thank You", "the plural noun Books", "the word Hello", "the day Monday", "the word School", "the greeting Good Morning"],
+                    respuestas: ["Verb that means ser or estar in Spanish", "Pronoun used to refer to a male person", "Expression used to greet someone arriving", "The number that follows nine", "The color of the sky on a clear day", "Expression used when leaving or parting", "The professional person who guides students", "Interrogative pronoun used to ask about things", "A round red or green fruit", "Polite phrase used to express gratitude", "More than one printed volume to read", "Common informal greeting to start a conversation", "The very first day of the working week", "The physical institution where education takes place", "Greeting used from dawn until noon"]
+                },
+                2: {
+                    conceptos: ["the Present Continuous", "the past simple of Go", "the modal verb Can", "the word However", "the Comparative form", "the Present Perfect tense", "the word Beautiful", "the pronoun Themselves", "the adverb Quickly", "the word Although", "the structure Going To", "the plural noun Children", "the Preposition Behind", "the Uncountable noun Water", "the adjective Anxious"],
+                    respuestas: ["Tense used for actions happening right now", "The irregular past tense form Went", "Modal verb that expresses ability or permission", "Connector used to introduce a contrasting statement", "Form used to compare two distinct elements", "Tense connecting past actions with present results", "Adjective describing high aesthetic appeal", "Reflexive pronoun for a group of people", "Adverb that means at a fast pace", "Conjunction used to introduce a concession", "Structure used to express future planned intentions", "The correct irregular plural form of child", "Preposition indicating a position at the back", "Liquid substance that cannot be counted directly", "Adjective describing a state of intense worry"]
+                },
+                3: {
+                    conceptos: ["the Third Conditional", "the phrasal verb Bring Up", "the word Furthermore", "the inversion structure", "the Gerund after prepositions", "the passive voice usage", "the word Nonetheless", "the idioms piece of cake", "the Past Perfect Continuous", "the prefix Mis-", "the word Ubiquitous", "the subjunctive mood", "the suffix -less", "the word Reluctance", "the phrasal verb Look Forward To"],
+                    respuestas: ["Structure for hypothetical past situations and results", "Phrasal verb that means to raise children", "Formal connector used to add extra information", "Changing word order for emphasis or formality", "Using the -ing form directly after a preposition", "Focusing on the action's recipient rather than doer", "Adverb meaning in spite of that or nevertheless", "Idiomatic expression meaning extremely easy to do", "Tense describing a long past action before another", "Prefix indicating a wrong or bad action", "Adjective that means present or found everywhere", "Mood used to express demands, wishes, or suggestions", "Suffix that indicates the total absence of something", "Noun meaning unwillingness to do something", "Phrasal verb meaning to anticipate something with pleasure"]
+                }
             },
-            "Física": {
-                1: [
-                    { t: "Cinemática Elemental", q: "Si un automóvil avanza a una velocidad constante de 60 km/h durante un tiempo de 2 horas, ¿qué distancia total recorrió?", a: "30 kilómetros", b: "120 kilómetros", c: "62 kilómetros", d: "180 kilómetros", cta: "B" },
-                    { t: "Dinámica Clásica", q: "Según la Segunda Ley de Newton, si aumentamos la fuerza neta aplicada sobre un objeto manteniendo su masa constante, ¿qué sucede?", a: "La aceleración del objeto aumenta de forma proporcional", b: "La masa del objeto disminuye de inmediato", c: "El objeto se detiene instantáneamente", d: "La energía potencial se vuelve cero", cta: "A" },
-                    { t: "Termodinámica", q: "¿Cuál es el mecanismo de transferencia de calor que ocurre sin necesidad de contacto físico ni un medio material, como el calor que nos llega del Sol?", a: "Conducción", b: "Convección", c: "Radiación", d: "Fusión", cta: "C" },
-                    { t: "Estados de la Materia", q: "¿Qué cambio de estado físico ocurre cuando una sustancia pasa directamente de estado sólido a estado gaseoso sin pasar por el líquido?", a: "Evaporación", b: "Sublimación", c: "Condensación", d: "Solidificación", cta: "B" },
-                    { t: "Óptica y Ondas", q: "¿Qué fenómeno de la luz ocurre cuando un rayo choca contra un espejo y regresa al mismo medio cambiando su dirección?", a: "Refracción", b: "Reflexión", c: "Difracción", d: "Dispersión", cta: "B" }
-                ]
+            "Historia": {
+                1: {
+                    conceptos: ["la Prehistoria", "las pirámides de Egipto", "el Imperio Romano", "el descubrimiento de América", "la Revolución de Mayo", "los jeroglíficos", "el trueque antiguo", "los caballeros medievales", "el Renacimiento", "la Revolución Francesa", "los incas", "la declaración de independencia", "las colonias", "los mayas", "el sedentarismo histórico"],
+                    respuestas: ["Periodo previo a la invención de la escritura", "Monumentos funerarios construidos para los faraones", "Civilización antigua de gran expansión mediterránea liderada por Roma", "Llegada de la expedición de Colón en 1492", "Sucesos de 1810 que iniciaron el gobierno patrio", "Sistema de escritura basado en símbolos e imágenes", "Intercambio directo de productos sin usar dinero", "Guerreros armados que protegían los feudos medievales", "Movimiento cultural europeo de reactivación artística y científica", "Conflicto social que derrocó la monarquía absoluta en 1789", "Civilización andina prehispánica que habitó el Cuzco", "Acto formal de soberanía de una nación", "Territorios establecidos y controlados por una potencia extranjera", "Civilización mesoamericana famosa por su calendario astronómico", "Establecimiento definitivo de comunidades en un solo lugar"]
+                },
+                2: {
+                    conceptos: ["el Feudalismo europeo", "la Ruta de la Seda", "la Reforma Protestante", "la Revolución Industrial", "el absolutismo monárquico", "la Primera Guerra Mundial", "el Tratado de Versalles", "la Crisis de 1929", "la Guerra Fría", "la caída del Muro de Berlín", "la Ilustración filósofa", "el Imperialismo del siglo XIX", "las guerras de independencia americanas", "la unificación italiana", "el Islam medieval"],
+                    respuestas: ["Sistema político basado en feudos y vasallaje", "Red comercial euroasiática de intercambio cultural y mercantil", "Movimiento religioso de Martín Lutero contra la Iglesia", "Periodo de mecanización productiva iniciado en Gran Bretaña", "Régimen donde el rey concentra todo el poder", "Conflicto bélico global desarrollado entre 1914 y 1918", "Acuerdo de paz que impuso duras sanciones a Alemania", "Colapso financiero de la bolsa de Nueva York", "Enfrentamiento ideológico bipolar entre Estados Unidos y la URSS", "Acontecimiento de 1989 que simbolizó el fin del bloque soviético", "Corriente de pensamiento que defendía el uso de la razón", "Expansión y reparto colonial de África y Asia", "Procesos militares para romper el dominio de España", "Proceso político liderado por Garibaldi y Cavour", "Expansión califal desde la península arábiga"]
+                },
+                3: {
+                    conceptos: ["la Paz de Westfalia", "el Imperio Bizantino tardío", "el Edicto de Nantes", "la Revolución Meiji", "el Congreso de Viena", "la Guerra de los Treinta Años", "el absolutismo ilustrado", "la República de Weimar", "la Doctrina Truman", "la descolonización de África", "los acuerdos de Bretton Woods", "la crisis de los misiles de 1962", "el tratado de Tordesillas", "la Comuna de París", "el cisma de Occidente"],
+                    respuestas: ["Tratado de 1648 que sentó las bases del Estado-nación", "Supervivencia oriental del imperio romano caída en 1453", "Decreto de tolerancia religiosa hacia los hugonotes franceses", "Modernización e industrialización acelerada del Japón imperial", "Reunión internacional para restaurar el absolutismo en Europa", "Conflicto político-religioso centroeuropeo del siglo XVII", "Régimen monárquico que adoptó reformas racionales sin perder poder", "Periodo democrático e inestable de Alemania post-Primera Guerra", "Política exterior estadounidense para contener la expansión comunista", "Procesos de emancipación de mediados del siglo XX", "Creación del sistema financiero mundial con el FMI", "Momento de máxima tensión nuclear en territorio cubano", "Reparto de áreas de navegación entre España y Portugal", "Primer gobierno obrero y popular autogestionado de 1871", "División de la iglesia católica con múltiples papas simultáneos"]
+                }
             },
-            "Química": {
-                1: [
-                    { t: "Enlaces Químicos", q: "¿Qué tipo de enlace químico se forma cuando dos átomos comparten electrones de manera equitativa para alcanzar la estabilidad?", a: "Enlace Iónico", b: "Enlace Metálico", c: "Enlace Covalente", d: "Puente de Hidrógeno", cta: "C" },
-                    { t: "Fórmulas Químicas", q: "La fórmula química del agua es H2O. ¿Qué nos indica exactamente esta representación estructural?", a: "Que contiene dos átomos de Oxígeno por uno de Hidrógeno", b: "Que está compuesta por dos moléculas de Helio", c: "Que posee dos átomos de Hidrógeno unidos químicamente a un átomo de Oxígeno", d: "Que cambia su pH según la temperatura ambiente", cta: "C" },
-                    { t: "Estados y Soluciones", q: "¿Qué escala numérica se utiliza en el laboratorio para medir el nivel de acidez o alcalinidad de una solución acuosa?", a: "Escala Celsius", b: "Escala de pH", c: "Escala de Mohs", d: "Escala Richter", cta: "B" },
-                    { t: "Tabla Periódica", q: "¿Cuál es el símbolo químico correcto del elemento Hierro?", a: "H", b: "Hi", c: "Fe", d: "F", cta: "C" },
-                    { t: "Reacciones Químicas", q: "En una ecuación química balanceada, ¿qué nombre reciben las sustancias iniciales situadas a la izquierda de la flecha de reacción?", a: "Productos", b: "Catalizadores", c: "Reactivos", d: "Precipitados", cta: "C" }
-                ]
+            "Geografía": {
+                1: {
+                    conceptos: ["el Ecuador terrestre", "una montaña", "un mapa geográfico", "los océanos", "la brújula", "los continentes", "un río", "el clima", "la isla", "el desierto", "las capitales", "un volcán", "la frontera", "el relieve", "los puntos cardinales"],
+                    respuestas: ["Línea imaginaria que divide la Tierra en dos hemisferios", "Gran elevación natural del terreno de la corteza", "Representación gráfica y plana de la superficie terrestre", "Grandes masas de agua salada que cubren la Tierra", "Instrumento con aguja imantada que señala el Norte", "Grandes extensiones continuas de tierra en el planeta", "Corriente natural de agua dulce que fluye continuamente", "Estado medio de la atmósfera en una región", "Porción de tierra firme rodeada completamente por agua", "Zona árida con precipitaciones casi nulas y poca vegetación", "Ciudades donde residen las autoridades de un gobierno", "Abertura de la corteza que expulsa magma y gases", "Línea convencional que separa dos territorios estatales", "Configuración o formas de la superficie de la corteza", "Norte, Sur, Este y Oeste como guías espaciales"]
+                },
+                2: {
+                    conceptos: ["las placas tectónicas", "la densidad de población", "las coordenadas geográficas", "las corrientes marinas", "la cuenca hidrográfica", "el calentamiento global", "la globalización económica", "los husos horarios", "la erosión eólica", "la deforestación masiva", "las llanuras aluviales", "el Producto Interno Bruto regional", "la escala cartográfica", "el efecto de invernadero", "la migración interna"],
+                    respuestas: ["Fragmentos rígidos de la litosfera que se desplazan", "Número promedio de habitantes por kilómetro cuadrado", "Sistema de latitud y longitud para ubicar puntos", "Flujos continuos de agua dentro de los océanos", "Territorio cuyas aguas drenan a un mismo río principal", "Aumento sostenido de la temperatura media del planeta", "Integración mundial de mercados, comercios y finanzas", "Cada una de las veinticuatro áreas horarias del planeta", "Desgaste de rocas y suelos causado por el viento", "Pérdida provocada de bosques para actividades agrícolas", "Tierras planas formadas por sedimentos de desbordamientos", "Valor total de bienes producidos en un área", "Relación de proporción entre el mapa y el terreno real", "Retención térmica atmosférica por acción de gases específicos", "Movimiento de personas entre provincias de un mismo país"]
+                },
+                3: {
+                    conceptos: ["la proyección de Mercator", "la teoría del lugar central", "la transición demográfica avanzada", "el geomorfismo estructural", "la huella ecológica global", "el sesgo de la gentrificación urbanística", "la geopolítica crítica", "la escorrentía superficial", "las zonas de subducción profunda", "la conurbación interestatal", "el desarrollo sostenible genuino", "el periurbanismo", "la vulnerabilidad ambiental", "los acuíferos confinados", "la teledetección espacial"],
+                    respuestas: ["Proyección cilíndrica que distorsiona el tamaño de los polos", "Modelo sobre la distribución y tamaño de ciudades", "Etapa de baja natalidad y mortalidad en sociedades desarrolladas", "Estudio del relieve condicionado por fallas y plegamientos", "Indicador del impacto humano sobre la capacidad del ecosistema", "Transformación urbana que desplaza a habitantes originales de bajos recursos", "Análisis de las relaciones de poder espacial desmitificando discursos estatales", "Agua de lluvia que circula libremente sobre el suelo", "Regiones donde una placa tectónica se hunde bajo otra", "Unión física continua de varias ciudades independientes", "Crecimiento que equilibra economía, sociedad y preservación ecológica", "Espacio de transición difuso entre la ciudad y el campo", "Grado de susceptibilidad de una población ante catástrofes", "Reservas subterráneas de agua protegidas por capas impermeables", "Adquisición de información planetaria mediante satélites artificiales"]
+                }
             },
             "Biología": {
-                1: [
-                    { t: "Biología Celular", q: "¿Cuál es el organelo exclusivo de la célula vegetal encargado de realizar la fotosíntesis transformando luz solar en energía?", a: "La Mitocondria", b: "El Cloroplasto", c: "El Ribosoma", d: "El Aparato de Golgi", cta: "B" },
-                    { t: "Taxonomía de Reinos", q: "¿A qué reino de la naturaleza pertenecen los hongos, las levaduras y los mohos?", a: "Reino Plantae", b: "Reino Monera", c: "Reino Fungi", d: "Reino Protista", cta: "C" },
-                    { t: "Ecología y Cadenas Tróficas", q: "Dentro de una cadena alimenticia o trófica, ¿qué rol fundamental cumplen las plantas verdes?", a: "Consumidores primarios", b: "Descomponedores biológicos", c: "Productores autótrofos", d: "Consumidores secundarios", cta: "C" },
-                    { t: "Genética Básica", q: "¿Qué molécula con estructura de doble hélice contiene toda la información genética hereditaria de los seres vivos?", a: "ARN", b: "ATP", c: "ADN", d: "Lípidos", cta: "C" },
-                    { t: "Sistemas del Cuerpo", q: "¿Qué organelo celular actúa como la central energética tanto de la célula animal como de la vegetal, realizando la respiración celular?", a: "El Núcleo", b: "La Mitocondria", c: "El Vacuolo", d: "La Membrana", cta: "B" }
-                ]
+                1: {
+                    conceptos: ["la célula animal", "la fotosíntesis básica", "las plantas", "los animales carnívoros", "el agua en los seres vivos", "la respiración pulmonar", "el esqueleto óseo", "las plantas verdes", "los animales herbívoros", "el corazón humano", "los sentidos del cuerpo", "los insectos", "la semilla vegetal", "la piel", "el ciclo del agua biológico"],
+                    respuestas: ["Unidad estructural básica sin pared celular rígida", "Proceso vegetal para transformar luz en alimento químico", "Organismos autótrofos que producen su propio sustento", "Especies que se alimentan exclusivamente de carne de otros", "Elemento vital que actúa como solvente universal biológico", "Intercambio de gases realizado a través de los pulmones", "Estructura de huesos que sostiene y protege el cuerpo", "Productores primarios gracias a la presencia de clorofila", "Seres vivos que se alimentan directamente de tejidos vegetales", "Órgano muscular encargado de bombear sangre al organismo", "Mecanismos receptores como vista, oído, tacto, gusto y olfato", "Invertebrados que poseen el cuerpo dividido en tres segmentos", "Estructura que contiene el embrión para una nueva planta", "Órgano más extenso que actúa como barrera protectora", "Evaporación y transpiración de los organismos hacia la atmósfera"]
+                },
+                2: {
+                    conceptos: ["la mitosis celular", "el ADN macromolécula", "la selección natural", "la homeostasis corporal", "el sistema inmunológico", "las neuronas", "el ecosistema local", "la cadena alimentaria", "la respiración celular anaeróbica", "las enzimas biológicas", "los cromosomas", "la reproducción asexual", "las bacterias procariotas", "la fotosíntesis fase oscura", "las hormonas animales"],
+                    respuestas: ["División celular que genera dos células hijas idénticas", "Molécula bicatenaria que almacena toda la información genética", "Mecanismo evolutivo de supervivencia del espécimen más apto", "Capacidad de autorregulación para mantener condiciones internas constantes", "Red defensiva contra agentes patógenos e infecciones externas", "Células especializadas en transmitir impulsos bioeléctricos nerviosos", "Interacción de factores bióticos y abióticos en un entorno", "Secuencia lineal de transferencia de nutrientes entre organismos", "Producción de energía celular en ausencia total de oxígeno", "Catalizadores proteicos que aceleran reacciones químicas vitales", "Estructuras altamente condensadas de ADN visibles en división", "Generación de descendientes a partir de un único progenitor", "Microorganismos unicelulares que carecen de un núcleo definido", "Fijación del carbono usando ATP sin intervención directa de luz", "Mensajeros químicos que viajan por el torrente sanguíneo"]
+                },
+                3: {
+                    conceptos: ["la transcripción del ARN", "la replicación semiconservativa", "la deriva genética", "la fosforilación oxidativa", "la epigenética moderna", "la apoptosis programada", "la endosimbiosis consecutiva", "la cascada de coagulación", "los retrovirus biológicos", "el ciclo de Krebs", "el potencial de acción neuronal", "la secuenciación de nucleótidos", "la especiación alopátrica", "la transducción de señales celulares", "los priones infecciosos"],
+                    respuestas: ["Síntesis de ARN mensajero usando una hebra molde de ADN", "Copia del ADN conservando una cadena madre y una nueva", "Cambio aleatorio en las frecuencias alélicas de poblaciones pequeñas", "Síntesis masiva de ATP en la cadena de transporte mitocondrial", "Estudio de cambios heredables que no alteran la secuencia de ADN", "Mecanismo de muerte celular regulada para eliminar células dañadas", "Teoría del origen evolutivo de las mitocondrias y cloroplastos", "Compleja secuencia de reacciones enzimáticas para detener hemorragias", "Virus que usan transcriptasa inversa para integrar su genoma", "Ruta metabólica central de oxidación de la acetil-CoA", "Inversión transitoria del potencial eléctrico de la membrana celular", "Determinación del orden exacto de bases en un fragmento", "Formación de nuevas especies debido al aislamiento geográfico prolongado", "Mecanismo por el cual una señal externa altera el comportamiento celular", "Proteínas patógenas mal plegadas que causan enfermedades neurodegenerativas"]
+                }
+            },
+            "Física y Química": {
+                1: {
+                    conceptos: ["la materia", "el átomo elemental", "los tres estados físicos", "la gravedad terrestre", "la temperatura", "los elementos químicos", "la fuerza física", "la luz visible", "la mezcla heterogénea", "el peso de los cuerpos", "la energía", "el punto de ebullición", "la velocidad constante", "el imán natural", "el sonido como onda"],
+                    respuestas: ["Todo aquello que posee masa y ocupa un volumen", "Unidad mínima constituyente de la materia con propiedades químicas", "Sólido, líquido y gaseoso como agregaciones comunes", "Atracción natural que ejerce la Tierra sobre los objetos", "Medida del nivel de energía cinética de las partículas", "Sustancias puras listadas formalmente en la tabla periódica", "Acción capaz de alterar el estado de movimiento o reposo", "Onda electromagnética que puede ser percibida por el ojo", "Unión de sustancias donde se pueden distinguir sus componentes", "Fuerza con que la gravedad atrae una masa determinada", "Capacidad para realizar un trabajo o generar transformaciones", "Temperatura exacta a la cual un líquido pasa a gas", "Desplazamiento en línea recta cubriendo distancias iguales en tiempos iguales", "Objeto que posee un campo magnético capaz de atraer metales", "Onda mecánica que se propaga a través de un medio"]
+                },
+                2: {
+                    conceptos: ["la tabla periódica organizada", "los enlaces iónicos", "el movimiento rectilíneo uniforme", "la ley de conservación de masa", "las reacciones endotérmicas", "la densidad de las sustancias", "la aceleración constante", "los enlaces covalentes", "el pH de soluciones", "las soluciones saturadas", "la energía potencial gravitatoria", "la fuerza de fricción", "los isótopos de un elemento", "la presión hidrostática", "el mol químico"],
+                    respuestas: ["Clasificación de elementos según su número atómico creciente", "Transferencia de electrones entre un metal y un no metal", "Trayectoria recta con velocidad invariable y aceleración nula", "La masa no se crea ni se destruye en reacciones", "Procesos químicos que absorben energía térmica del entorno", "Relación matemática exacta entre la masa y el volumen ocupado", "Variación constante de la velocidad por unidad de tiempo", "Compartición de pares de electrones entre átomos no metálicos", "Escala que mide el grado de acidez o alcalinidad", "Mezcla que contiene la máxima cantidad de soluto disuelto", "Energía almacenada por un cuerpo debido a su altura", "Fuerza opuesta al deslizamiento entre dos superficies en contacto", "Átomos con igual número de protones pero distintos neutrones", "Presión ejercida por un fluido en reposo a determinada profundidad", "Unidad que representa 6.022 por 10 a la 23 partículas"]
+                },
+                3: {
+                    conceptos: ["la mecánica cuántica", "la entalpía de reacción", "la teoría de la relatividad especial", "el principio de exclusión de Pauli", "la hibridación de orbitales", "el efecto fotoeléctrico", "la cinética química", "el principio de incertidumbre", "la electrólisis avanzada", "la termodinámica segunda ley", "las fuerzas intermoleculares de London", "la configuración electrónica externa", "el equilibrio químico dinámico", "la fisión nuclear", "la ley de Hess"],
+                    respuestas: ["Física que describe el comportamiento a escalas subatómicas", "Flujo de energía térmica liberada o absorbida a presión constante", "Teoría del espacio-tiempo dependiente de la velocidad de la luz", "Dos electrones en un átomo no pueden tener mismos números cuánticos", "Combinación de orbitales atómicos para formar nuevos orbitales enlaces", "Emisión de electrones al incidir luz sobre una superficie metálica", "Estudio de las velocidades y mecanismos de reacciones químicas", "Imposibilidad de conocer con precisión posición y momento simultáneamente", "Descomposición química mediante el uso de corriente eléctrica continua", "Establece que la entropía del universo tiende a aumentar", "Atracciones temporales entre dipolos inducidos en moléculas no polares", "Distribución de electrones en el nivel energético más alto", "Estado donde las velocidades de reacción directa e inversa se igualan", "División de un núcleo atómico pesado en fragmentos ligeros", "Suma de entalpías de pasos intermedios para el calor total"]
+                }
+            },
+            "Música": {
+                1: {
+                    conceptos: ["el pentagrama", "las notas musicales", "la clave de Sol", "el ritmo musical", "la guitarra", "el silencio musical", "el canto coral", "los instrumentos de percusión", "la melodía", "el pulso musical", "los instrumentos de viento", "el piano", "la velocidad o tempo", "la canción infantil", "el aplauso coordinado"],
+                    respuestas: ["Conjunto de cinco líneas y cuatro espacios para escribir música", "Do, Re, Mi, Fa, Sol, La y Si como sonidos", "Símbolo que fija la posición de las notas agudas", "Organización y duración de los sonidos en el tiempo", "Instrumento de cuerda pulsada con caja de resonancia de madera", "Ausencia deliberada de sonido con duración gráfica determinada", "Grupo de personas que cantan juntas de forma organizada", "Instrumentos que suenan al ser golpeados, sacudidos o raspados", "Sucesión lineal de sonidos con sentido musical y expresivo", "Latido interno regular que marca la estructura del tiempo", "Instrumentos donde el sonido se genera por vibración del aire", "Instrumento de teclado y cuerdas percutidas con gran registro", "Rapidez con la que se ejecuta una pieza musical", "Composición vocal simple orientada al público de menor edad", "Acompañamiento rítmico básico usando las palmas de las manos"]
+                },
+                2: {
+                    conceptos: ["las figuras rítmicas", "los acordes mayores", "las escalas diatónicas", "el compás de 4/4", "los intervalos musicales", "los acordes menores", "la textura homofónica", "el matiz dinámico forte", "la armadura de clave", "el contratiempo rítmico", "la música folclórica", "la función de la clave de Fa", "los instrumentos de cuerda frotada", "el arpegio de acordes", "el timbre vocal"],
+                    respuestas: ["Signos que determinan la duración exacta de cada sonido", "Estructura armónica de tres notas con sonoridad alegre", "Sucesión ordenada de ocho sonidos espaciados por tonos y semitonos", "Cuatro pulsos de negra por cada unidad de sección", "Distancia o diferencia de altura entre dos sonidos distintos", "Estructura armónica de tres notas con sonoridad melancólica", "Línea melódica principal acompañada por acordes subordinados", "Indicación que exige ejecutar la música con alta intensidad", "Conjunto de alteraciones colocadas al inicio del pentagrama", "Sonido emitido en la parte débil de un pulso", "Expresiones musicales tradicionales y representativas de una región", "Símbolo utilizado para ubicar las notas musicales graves", "Familia instrumental que incluye al violín, viola y violonchelo", "Tocar las notas de un acorde de manera sucesiva", "Cualidad única que permite distinguir una voz de otra"]
+                },
+                3: {
+                    conceptos: ["el contrapunto formal", "las escalas pentatónicas", "el dodecafonismo", "la modulación armónica", "la polirritmia avanzada", "los modos griegos antiguos", "el acorde de séptima disminuida", "la textura polifónica", "la serie armónica físico-musical", "el leitmotiv operístico", "el análisis schenkeriano", "el atonalismo libre", "las apoyaturas expresivas", "el timbre espectral", "la forma sonata clásica"],
+                    respuestas: ["Técnica de combinar múltiples líneas melódicas independientes simultáneamente", "Escala de cinco notas por octava sin semitonos intermedios", "Composición basada en series de doce notas sin jerarquías", "Proceso ordenado para cambiar de tonalidad en una obra", "Superposición de diferentes patrones rítmicos en un mismo compás", "Estructuras modales que precedieron al sistema tonal mayor-menor", "Acorde de cuatro notas construido por terceras menores superpuestas", "Múltiples melodías independientes que suenan de manera simultánea", "Sucesión de frecuencias secundarias generadas por un sonido fundamental", "Tema musical recurrente asociado a un personaje o idea", "Método que reduce obras a su estructura armónica fundamental", "Ausencia absoluta de un centro tonal o gravedad armónica", "Nota de adorno que retrasa la aparición del sonido esperado", "Composición basada en la manipulación directa de armónicos acústicos", "Estructura tripartita compuesta por Exposición, Desarrollo y Reexposición"]
+                }
+            },
+            "Artes Visuales": {
+                1: {
+                    conceptos: ["los colores primarios", "la línea en el dibujo", "el dibujo a lápiz", "la pintura artística", "los colores secundarios", "el modelado en arcilla", "el collage de papel", "el paisaje natural", "el retrato visual", "el fondo de una obra", "la forma geométrica", "los colores cálidos", "la textura visual", "el lienzo de tela", "los colores fríos"],
+                    respuestas: ["Rojo, amarillo y azul que no pueden crearse mezclando", "Sucesión continua de puntos en el plano visual artístico", "Técnica de trazar figuras usando grafito sobre papel", "Aplicación de pigmentos sobre una superficie para representar formas", "Colores obtenidos mezclando partes iguales de dos primarios", "Dar forma tridimensional a una pasta maleable con manos", "Composición creada pegando diversos fragmentos sobre un soporte", "Representación artística de entornos naturales y horizontes abiertos", "Representación visual del rostro de una persona específica", "Espacio que rodea o se sitúa detrás de la figura", "Contorno cerrado delimitado por líneas de forma regular", "Gama de colores asociados al fuego como el naranja", "Sensación de relieve o superficie simulada en una pintura", "Soporte textil tenso utilizado comúnmente para pintar", "Gama de colores asociados al agua como el azul"]
+                },
+                2: {
+                    conceptos: ["el círculo cromático", "la perspectiva lineal", "los colores complementarios", "el claroscuro técnico", "la composición asimétrica", "la escultura exenta", "el grabado en relieve", "el valor tonal", "el arte abstracto", "la simetría axial", "el arte pop histórico", "el equilibrio visual", "la técnica de la acuarela", "el bodegón pictórico", "la monocromía"],
+                    respuestas: ["Representación circular ordenada de todos los colores del espectro", "Técnica matemática para simular profundidad tridimensional en planos", "Pares de colores opuestos directamente en el círculo cromático", "Uso de fuertes contrastes entre luces y sombras proyectadas", "Distribución de elementos con pesos visuales equivalentes pero desiguales", "Obra tridimensional tallada esculpida que puede rodearse completamente", "Estampa obtenida transfiriendo tinta desde una matriz tallada", "Grado de luminosidad o claridad de un color específico", "Estilo que prescinde de la representación de objetos reales", "Distribución idéntica de elementos respecto a un eje central", "Movimiento del siglo XX inspirado en imágenes de consumo público", "Distribución armoniosa del peso de elementos en una obra", "Pintura translúcida realizada con pigmentos diluidos en agua", "Pintura que representa objetos inanimados de la vida cotidiana", "Uso exclusivo de un solo color con variaciones tonales"]
+                },
+                3: {
+                    conceptos: ["la regla de los tercios", "el Impresionismo pictórico", "la técnica de la veladura", "el Cubismo analítico", "el Surrealismo artístico", "la abstracción lírica", "la técnica del esgrafiado", "el Minimalismo conceptual", "la proporción áurea visual", "el expresionismo abstracto", "el grabado a la aguafuerte", "el Isomorfismo de la Gestalt", "el performance artístico", "la técnica del dripping", "la semiótica visual"],
+                    respuestas: ["Guía de composición que divide el encuadre en nueve sectores", "Movimiento enfocado en capturar los efectos de la luz instantánea", "Capa delgada de pintura transparente aplicada sobre otra seca", "Descomposición de objetos en formas geométricas puras y múltiples puntos", "Estilo inspirado en el inconsciente, los sueños y el automatismo", "Expresión pictórica espontánea sin ataduras de formas predefinidas", "Técnica de raspar una capa superior para revelar el fondo", "Corriente que reduce las obras a estructuras y elementos mínimos", "Relación matemática armónica basada en la proporción del número de oro", "Movimiento de posguerra con pintura gestual e intuitiva a gran escala", "Grabado calcográfico mediante acción corrosiva de ácidos sobre metal", "Correspondencia entre la estructura de estímulos visuales y percepción", "Acción expresiva efímera realizada en vivo ante el público", "Técnica de salpicar o chorrear pintura directamente sobre tela", "Estudio de los mecanismos de significación de imágenes y signos"]
+                }
+            },
+            "Teatro": {
+                1: {
+                    conceptos: ["el actor o actriz", "el escenario teatral", "el diálogo teatral", "el vestuario", "el público espectador", "el aplauso final", "los títeres", "la escenografía básica", "la mímica corporal", "el director teatral", "el libreto o guion", "el maquillaje teatral", "la obra infantil", "el telón de sala", "el saludo final"],
+                    respuestas: ["Persona que interpreta y da vida a un personaje", "Espacio físico delimitado donde se realiza la representación", "Intercambio verbal de palabras entre dos o más personajes", "Conjunto de ropas y prendas usadas por los actores", "Grupo de personas que asisten a presenciar la función", "Manifestación colectiva de agradecimiento de la audiencia al terminar", "Figuras movibles usadas para representar historias en teatrinos", "Decorados y objetos que ambientan el espacio de la obra", "Expresión dramática basada puramente en gestos y movimientos corporales", "Persona responsable de coordinar la puesta en escena integral", "Texto escrito que contiene los diálogos y acotaciones técnicas", "Cosméticos especiales para resaltar expresiones de los actores en escena", "Representación escénica adaptada con temáticas para el público infantil", "Cortina de gran tamaño que abre o cierra el escenario", "Momento en que el elenco agradece la asistencia de la audiencia"]
+                },
+                2: {
+                    conceptos: ["la cuarta pared", "las acotaciones técnicas", "el monólogo dramático", "la estructura de tres actos", "el clímax de la obra", "el subtexto teatral", "la utilería escénica", "el diseño de iluminación", "la catarsis trágica", "el teatro de sombras", "el conflicto dramático", "el género de la comedia", "el espacio escénico invisible", "la improvisación guiada", "el proscenio del teatro"],
+                    respuestas: ["Pared imaginaria que separa a los actores del público", "Indicaciones escritas por el autor para orientar la acción", "Discurso largo que realiza un personaje en voz alta", "Planteamiento, Nudo y Desenlace como ordenamiento formal de la trama", "Punto de máxima tensión y resolución en la historia", "Significado oculto que subyace detrás de las palabras habladas", "Objetos móviles que los actores manipulan durante la función", "Distribución de luces para crear atmósferas y enfocar acciones", "Purificación emocional experimentada por el público ante una tragedia", "Efecto visual proyectando siluetas opacas sobre pantallas translúcidas", "Enfrentamiento de fuerzas opuestas que motoriza toda la acción", "Género dramático caracterizado por tramas divertidas y finales felices", "Construcción mental de lugares sugeridos mediante la actuación", "Creación instantánea de escenas a partir de pautas preestablecidas", "Parte del escenario situada entre el borde y el telón frontal"]
+                },
+                3: {
+                    conceptos: ["el distanciamiento brechtiano", "el teatro del absurdo", "el método Stanislavski", "la biomecánica de Meyerhold", "la catástrofe dramática", "la convención teatral abstracta", "el teatro de la crueldad", "la mímesis aristotélica", "la estructura del drama satírico", "el happening vanguardista", "el teatro documento", "la performatividad liminal", "las unidades aristotélicas de la tragedia", "el coro en el teatro griego", "la dramaturgia del espacio"],
+                    respuestas: ["Efecto para romper la ilusión teatral forzando la reflexión crítica", "Corriente que refleja la angustia y falta de sentido existencial", "Sistema actoral basado en la memoria emotiva y realismo psicológico", "Entrenamiento del actor fundamentado en la precisión y control físico", "Giro definitivo que precipita el desenlace fatal en la tragedia", "Acuerdo implícito sobre significados simbólicos dentro de la escena", "Estilo que busca impactar directamente los sentidos del espectador", "Imitación artística de acciones humanas en la teoría clásica", "Pieza cómica breve que aliviaba la tensión trágica griega", "Acontecimiento provocador que busca la participación del espectador", "Obras basadas rigurosamente en hechos reales y archivos históricos", "Estado de frontera entre la representación artística y la vida real", "Regla clásica que exige una sola acción, un día y un lugar", "Grupo que comentaba líricamente los sucesos de la obra clásica", "Estudio del valor significante de la disposición de objetos escénicos"]
+                }
+            },
+            "Dibujo y Composición Visual": {
+                1: {
+                    conceptos: ["el boceto inicial", "la línea de horizonte", "el punto de fuga", "la proporción visual", "el encuadre del dibujo", "el carboncillo", "el sombreado básico", "la figura geométrica base", "el dibujo lineal", "el plano de fondo", "la escala visual", "el contorno de figuras", "la hoja de papel", "el borrador de goma", "la composición centrada"],
+                    respuestas: ["Trazo rápido e introductorio para organizar las formas principales", "Línea imaginaria que simula la altura de los ojos del dibujante", "Punto del espacio donde convergen todas las líneas paralelas", "Relación correcta de tamaño entre las distintas partes de un objeto", "Selección de la porción de espacio que aparecerá en el papel", "Barra de madera carbonizada óptima para difuminar texturas y sombras", "Técnica de trazar líneas juntas para simular volumen y luz", "Uso de formas simples como círculos para encajar objetos complejos", "Dibujo basado exclusivamente en líneas sin manchas de color", "Superficie situada detrás del objeto de interés principal", "Relación matemática de tamaño entre el dibujo y el objeto real", "Línea exterior que define el límite de una figura dibujada", "Soporte plano tradicional utilizado para realizar las obras", "Herramienta que elimina trazos de lápiz para corregir errores", "Uso del eje del soporte para ubicar el elemento de mayor peso"]
+                },
+                2: {
+                    conceptos: ["la perspectiva de dos puntos", "el encaje de formas", "la trama de líneas", "el claroscuro de volumen", "la sección áurea compositiva", "el peso visual de elementos", "el dibujo analítico estructural", "la simetría radial", "la perspectiva atmosférica", "el contraste de valor tonal", "el ritmo visual formal", "la línea de tierra", "el dibujo técnico normalizado", "la tensión compositiva", "el equilibrio por compensación"],
+                    respuestas: ["Representación volumétrica usando dos puntos de fuga laterales", "Método de encerrar objetos complejos en figuras geométricas simples", "Líneas cruzadas secuenciales para generar gradaciones de gris profundas", "Modelado de volumen mediante transiciones suaves de luz a sombra", "División proporcional armónica basada en la proporción del número áureo", "Fuerza de atracción visual que ejerce un elemento en el lienzo", "Trazado que evidencia la geometría interna y ejes del objeto", "Organización regular de elementos alrededor de un punto central", "Simulación de profundidad imitando la neblina azulada de la distancia", "Diferencia marcada entre las zonas más claras y oscuras", "Repetición secuencial y armoniosa de formas o líneas visuales", "Línea que representa la base del plano donde se apoya el objeto", "Dibujo riguroso regulado por normas internacionales geométricas", "Disposición de formas que genera dinamismo e inestabilidad visual", "Equilibrio conseguido distribuyendo pesos diferentes a distancias variables"]
+                },
+                3: {
+                    conceptos: ["la perspectiva caballera", "la anamorfosis técnica", "la ley de continuidad compositiva", "el dibujo isométrico formal", "el claroscuro de Rembrandt", "la ley de balanza compositiva", "la composición en diagonal", "el canon de proporciones de Policleto", "la perspectiva axonométrica", "el equilibrio oculto dinámico", "la tensión diagonal compositiva", "el valor de la clave tonal alta", "el dibujo gestual anatómico", "la volumetría facetada", "la escala antropomórfica"],
+                    respuestas: ["Proyección axonométrica donde un plano conserva su forma real", "Deformación óptica que requiere un punto de vista específico para corregirse", "Tendencia del ojo a seguir la dirección de una línea sugerida", "Representación tridimensional donde los tres ejes forman ángulos iguales", "Técnica donde la luz emerge dramáticamente desde fondos oscuros", "Equilibrio simétrico perfecto colocando pesos iguales a distancias iguales", "Esquema dinámico que divide el soporte uniendo esquinas opuestas", "Regla clásica que establece la altura humana en siete cabezas", "Proyección geométrica sobre ejes para representar tres dimensiones", "Organización asimétrica libre que logra estabilidad mediante pesos sutiles", "Dirección de fuerzas visuales que maximizan el movimiento interno", "Predominio absoluto de grises claros y blancos en la obra", "Captura instantánea del movimiento y líneas de fuerza corporales", "Representación de superficies curvas mediante planos planos interconectados", "Regulación de tamaños tomando como referencia las dimensiones humanas"]
+                }
             }
         };
 
-        // Copiar preguntas para niveles 2, 3 y 4 automáticamente para asegurar estabilidad del motor
-        for (let mat in bancoMaestro) {
-            for (let n = 2; n <= 4; n++) {
-                bancoMaestro[mat][n] = bancoMaestro[mat][1];
-            }
-        }
+        const bancoMaestroCompleto = {};
 
+        // Construcción automatizada de preguntas aisladas por materia
+        function construirBancoPreguntasAnalitico() {
+            ASIGNATURAS_LISTA.forEach(materia => {
+                bancoMaestroCompleto[materia] = { 1: [], 2: [], 3: [] };
+                let datosMateria = semillasAcademicas[materia];
+
+                for (let nivel = 1; nivel <= 3; nivel++) {
+                    let etiquetaNivel = nivel === 1 ? "Fácil" : nivel === 2 ? "Difícil" : "Extremo";
+                    let poolNivel = datosMateria[nivel];
+                    
+                    for (let i = 0; i < 15; i++) {
+                        let conceptoBase = poolNivel.conceptos[i];
+                        let respuestaCorrecta = poolNivel.respuestas[i];
+                        
+                        // Filtrar estrictamente los distractores del mismo pool para evitar duplicidad de la respuesta correcta
+                        let distractoresPuros = poolNivel.respuestas.filter(resp => resp !== respuestaCorrecta);
+                        
+                        // Mezclar distractores
+                        for (let k = distractoresPuros.length - 1; k > 0; k--) {
+                            const j = Math.floor(Math.random() * (k + 1));
+                            [distractoresPuros[k], distractoresPuros[j]] = [distractoresPuros[j], distractoresPuros[k]];
+                        }
+
+                        let enunciadoFormateado = `Evaluando la asignatura de ${materia} (Nivel ${etiquetaNivel}), determine cuál de las siguientes opciones define o corresponde de manera exacta a: ${conceptoBase}.`;
+                        
+                        bancoMaestroCompleto[materia][nivel].push({
+                            t: `Núcleo de Diagnóstico Académico Oficial`,
+                            q: enunciadoFormateado,
+                            cta: respuestaCorrecta, 
+                            opciones: [respuestaCorrecta, distractoresPuros[0], distractoresPuros[1], distractoresPuros[2]]
+                        });
+                    }
+                }
+            });
+        }
+        construirBancoPreguntasAnalitico();
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const contenedorCheckboxes = document.getElementById("contenedor-checkboxes");
+            contenedorCheckboxes.innerHTML = ""; 
+            ASIGNATURAS_LISTA.forEach(m => {
+                contenedorCheckboxes.innerHTML += `<label><input type="checkbox" name="m-sel" value="${m}"> <b>${m}</b></label>`;
+            });
+        });
+
+        let nombreUsuario = "";
+        let gradoUsuario = "";
+        let edadUsuario = "";
         let materiasSeleccionadas = [];
-        let indexMateria = 0;
+        let indiceMateriaAct = 0;
         let nivelActual = 1; 
-        let indexPreguntaEnNivel = 0;
-        let examenActual = [];
-        let respuestasEstudiante = [];
-        
-        let nombreEstudiante = "";
-        let gradoEstudiante = 11;
-        let edadEstudiante = "";
+        let indicePreguntaAct = 0;
+        let preguntasNivelActual = [];
+        let preguntaActualObj = null;
+        let scoreMateriaNivel = 0;
+        let bitacoraFinal = [];
+
+        function mezclarArreglo(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
 
         function irAPagina2() {
             document.getElementById("p1").style.display = "none";
             document.getElementById("p2").style.display = "block";
-            actualizarFondoFase("CONJUNTO");
-        }
-
-        function toggleCubiculo() {
-            document.getElementById("sub-cc").style.display = document.getElementById("chk-cc").checked ? "grid" : "none";
         }
 
         function configurarPrueba() {
-            nombreEstudiante = document.getElementById("reg-nombre").value.trim();
-            gradoEstudiante = parseInt(document.getElementById("reg-grado").value);
-            edadEstudiante = document.getElementById("reg-edad").value.trim();
+            const inputNombre = document.getElementById("reg-nombre").value.trim();
+            const inputGrado = parseInt(document.getElementById("reg-grado").value, 10);
+            const inputEdad = document.getElementById("reg-edad").value.trim();
+            const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
 
-            if (!nombreEstudiante || isNaN(gradoEstudiante) || !edadEstudiante) {
-                alert("Por favor complete todos los datos del formulario de ingreso.");
+            if(!inputNombre || !regexLetras.test(inputNombre)) {
+                alert("Error: Nombre inválido. Use únicamente letras.");
+                return;
+            }
+            if(isNaN(inputGrado) || inputGrado < 1 || inputGrado > 11) {
+                alert("Error: Grado escolar no válido (Rango aceptado de 1 a 11).");
+                return;
+            }
+            if(!inputEdad || isNaN(parseInt(inputEdad, 10)) || parseInt(inputEdad, 10) < 1) {
+                alert("Error: Ingrese una edad válida.");
                 return;
             }
 
-            let checks = document.querySelectorAll('input[name="m-sel"]:checked');
-            materiasSeleccionadas = Array.from(checks).map(c => c.value);
+            const checkboxes = document.querySelectorAll("input[name='m-sel']:checked");
+            materiasSeleccionadas = [];
+            checkboxes.forEach(c => materiasSeleccionadas.push(c.value));
 
-            if (materiasSeleccionadas.length === 0) {
-                alert("Seleccione al menos una asignatura para comenzar la prueba.");
+            if(materiasSeleccionadas.length === 0) {
+                alert("Selecciona al menos una materia de la lista para continuar.");
                 return;
             }
+
+            nombreUsuario = inputNombre;
+            gradoUsuario = inputGrado;
+            edadUsuario = inputEdad;
 
             document.getElementById("p2").style.display = "none";
-            indexMateria = 0;
-            nivelActual = 1;
-            indexPreguntaEnNivel = 0;
-            
-            procesarBloqueMateria();
+            indiceMateriaAct = 0;
+            iniciarMateria();
         }
 
-        function procesarBloqueMateria() {
-            if (indexMateria < materiasSeleccionadas.length) {
-                let mat = materiasSeleccionadas[indexMateria];
-                
-                if (gradoEstudiante <= 5 && nivelActual > 2) {
-                    nivelActual = 1;
-                    indexMateria++;
-                    indexPreguntaEnNivel = 0;
-                    procesarBloqueMateria();
-                    return;
-                }
-
-                if (nivelActual <= 4) {
-                    examenActual = bancoMaestro[mat][nivelActual];
-                    indexPreguntaEnNivel = 0;
-                    mostrarPantallaAnuncioNivel(mat, nivelActual);
-                } else {
-                    nivelActual = 1;
-                    indexMateria++;
-                    procesarBloqueMateria();
-                }
-            } else {
-                mostrarResultadosFinales();
-            }
+        function iniciarMateria() {
+            nivelActual = 1; 
+            prepararBloqueNivel();
         }
 
-        function mostrarPantallaAnuncioNivel(materia, nivel) {
+        function prepararBloqueNivel() {
+            let mat = materiasSeleccionadas[indiceMateriaAct];
             document.getElementById("p3").style.display = "none";
-            actualizarFondoFase(materia);
+            
+            let pNivel = document.getElementById("p-nivel");
+            pNivel.style.display = "block";
 
-            let nombresNiveles = { 1: "Básico", 2: "Intermedio", 3: "Avanzado", 4: "Experto" };
-            document.getElementById("lbl-anuncio-materia").innerText = materia;
-            document.getElementById("lbl-anuncio-nivel").innerText = `Nivel ${nivel}: ${nombresNiveles[nivel]}`;
-            document.getElementById("lbl-anuncio-grado").innerText = `Dificultad adaptada de: Grado 1° a Grado ${gradoEstudiante}°`;
+            document.getElementById("lbl-anuncio-materia").innerText = mat;
+            let lblNivel = document.getElementById("badge-dinamico");
             
-            let btn = document.getElementById("btn-comenzar-nivel");
-            btn.onclick = function() {
-                document.getElementById("p-nivel").style.display = "none";
+            if(nivelActual === 1) { lblNivel.innerText = "Nivel Fácil"; lblNivel.className = "badge-nivel nv-facil"; }
+            else if(nivelActual === 2) { lblNivel.innerText = "Nivel Difícil"; lblNivel.className = "badge-nivel nv-dificil"; }
+            else { lblNivel.innerText = "Nivel Extremo"; lblNivel.className = "badge-nivel nv-extremo"; }
+
+            document.getElementById("lbl-anuncio-detalles").innerText = `Cargando set estructurado de 15 preguntas reales e independientes correspondientes a esta etapa de diagnóstico.`;
+
+            let pool = bancoMaestroCompleto[mat][nivelActual];
+            preguntasNivelActual = JSON.parse(JSON.stringify(pool));
+            mezclarArreglo(preguntasNivelActual); 
+
+            indicePreguntaAct = 0;
+            scoreMateriaNivel = 0;
+
+            document.getElementById("btn-comenzar-nivel").onclick = () => {
+                pNivel.style.display = "none";
                 document.getElementById("p3").style.display = "block";
-                presentarPregunta();
+                cargarPregunta();
             };
-            
-            document.getElementById("p-nivel").style.display = "block";
         }
 
-        function presentarPregunta() {
+        function cargarPregunta() {
             document.getElementById("box-fb").style.display = "none";
             document.getElementById("btn-avanzar-sig").style.display = "none";
-            
-            let btns = document.querySelectorAll(".btn-opc");
-            btns.forEach(b => b.removeAttribute("disabled"));
 
-            let mat = materiasSeleccionadas[indexMateria];
-            let p = examenActual[indexPreguntaEnNivel];
-
-            document.getElementById("txt-materia-act").innerText = `${mat} — Nivel ${nivelActual}`;
-            document.getElementById("txt-progreso-act").innerText = `Pregunta ${indexPreguntaEnNivel + 1}/5`;
-            
-            document.getElementById("lectura-contexto").innerText = `Tema de Estudio: ${p.t}`;
-            document.getElementById("enunciado-pregunta").innerText = p.q;
-            
-            document.getElementById("lbl-opcA").innerText = p.a;
-            document.getElementById("lbl-opcB").innerText = p.b;
-            document.getElementById("lbl-opcC").innerText = p.c;
-            document.getElementById("lbl-opcD").innerText = p.d;
-        }
-
-        function procesarRespuesta(opcionElegida) {
-            let p = examenActual[indexPreguntaEnNivel];
-            let fb = document.getElementById("box-fb");
-            
-            let btns = document.querySelectorAll(".btn-opc");
-            btns.forEach(b => b.setAttribute("disabled", "true"));
-
-            let esCorrecto = (opcionElegida === p.cta);
-            
-            if (esCorrecto) {
-                fb.innerText = "¡CORRECTO! Has seleccionado la opción correcta.";
-                fb.style.backgroundColor = "#d1fae5";
-                fb.style.color = "#065f46";
-            } else {
-                fb.innerText = `INCORRECTO. Has seleccionado una opción incorrecta.`;
-                fb.style.backgroundColor = "#fee2e2";
-                fb.style.color = "#991b1b";
-            }
-
-            respuestasEstudiante.push({
-                materia: materiasSeleccionadas[indexMateria],
-                nivel: nivelActual,
-                correcto: esCorrecto
+            const botonesOpc = document.querySelectorAll(".btn-opc");
+            botonesOpc.forEach(b => { 
+                b.disabled = false; 
+                b.style.backgroundColor = "#f8fafc"; 
+                b.style.borderColor = "#e2e8f0"; 
             });
 
-            fb.style.display = "block";
+            let mat = materiasSeleccionadas[indiceMateriaAct];
+            document.getElementById("txt-materia-act").innerText = `${mat} (${nivelActual === 1 ? 'Fácil' : nivelActual === 2 ? 'Difícil' : 'Extremo'})`;
+            document.getElementById("txt-progreso-act").innerText = `Pregunta ${indicePreguntaAct + 1}/15`;
+
+            preguntaActualObj = preguntasNivelActual[indicePreguntaAct];
+            document.getElementById("lectura-contexto").innerText = preguntaActualObj.t;
+            document.getElementById("enunciado-pregunta").innerText = preguntaActualObj.q;
+
+            let opcionesMezcladas = [...preguntaActualObj.opciones];
+            mezclarArreglo(opcionesMezcladas);
+            preguntaActualObj.opcionesVisibles = opcionesMezcladas;
+
+            document.getElementById("lbl-opcA").innerText = opcionesMezcladas[0];
+            document.getElementById("lbl-opcB").innerText = opcionesMezcladas[1];
+            document.getElementById("lbl-opcC").innerText = opcionesMezcladas[2];
+            document.getElementById("lbl-opcD").innerText = opcionesMezcladas[3];
+        }
+
+        function procesarRespuesta(idx) {
+            const botonesOpc = document.querySelectorAll(".btn-opc");
+            botonesOpc.forEach(b => b.disabled = true);
+
+            let seleccionada = preguntaActualObj.opcionesVisibles[idx];
+            let esCorrecta = (seleccionada === preguntaActualObj.cta);
+            let boxFb = document.getElementById("box-fb");
+            boxFb.style.display = "block";
+
+            if(esCorrecta) {
+                scoreMateriaNivel++;
+                boxFb.innerText = "¡Respuesta Correcta!";
+                boxFb.style.backgroundColor = "#10b981"; 
+                boxFb.style.color = "white";
+                botonesOpc[idx].style.backgroundColor = "#d1fae5";
+                botonesOpc[idx].style.borderColor = "#10b981";
+            } else {
+                boxFb.innerText = `Respuesta Incorrecta. La opción válida era: ${preguntaActualObj.cta}`;
+                boxFb.style.backgroundColor = "#ef4444"; 
+                boxFb.style.color = "white";
+                botonesOpc[idx].style.backgroundColor = "#fee2e2";
+                botonesOpc[idx].style.borderColor = "#ef4444";
+            }
+
             document.getElementById("btn-avanzar-sig").style.display = "block";
         }
 
         function irASiguiente() {
-            indexPreguntaEnNivel++;
-            if (indexPreguntaEnNivel < 5) {
-                presentarPregunta();
+            indicePreguntaAct++;
+            if(indicePreguntaAct < 15) {
+                cargarPregunta();
             } else {
-                nivelActual++;
-                procesarBloqueMateria();
+                let mat = materiasSeleccionadas[indiceMateriaAct];
+                let tagNivel = nivelActual === 1 ? "Fácil" : nivelActual === 2 ? "Difícil" : "Extremo";
+                bitacoraFinal.push({ materia: mat, nivel: tagNivel, aciertos: scoreMateriaNivel });
+
+                if(nivelActual < 3) {
+                    nivelActual++;
+                    prepararBloqueNivel();
+                } else {
+                    indiceMateriaAct++;
+                    if(indiceMateriaAct < materiasSeleccionadas.length) {
+                        iniciarMateria();
+                    } else {
+                        mostrarResultadosFinales();
+                    }
+                }
             }
         }
 
         function mostrarResultadosFinales() {
-            actualizarFondoFase("CONJUNTO"); 
             document.getElementById("p3").style.display = "none";
-            document.getElementById("p-final").style.display = "block";
-
-            document.getElementById("resumen-usuario").innerHTML = `
-                <b>Estudiante:</b> ${nombreEstudiante}<br>
-                <b>Grado Escolar:</b> ${gradoEstudiante}° Grado<br>
-                <b>Edad Registrada:</b> ${edadEstudiante} años<br>
-                <b>Áreas Diagnosticadas:</b> ${materiasSeleccionadas.join(", ")}
-            `;
+            let pFinal = document.getElementById("p-final");
+            pFinal.style.display = "block";
 
             let desglose = document.getElementById("desglose-resultados");
-            desglose.innerHTML = "";
+            desglose.innerHTML = `<p><b>Estudiante:</b> ${nombreUsuario}</p>`;
+            desglose.innerHTML += `<p><b>Grado:</b> ${gradoUsuario}° Grado</p>`;
+            desglose.innerHTML += `<p><b>Edad:</b> ${edadUsuario} Años</p><hr style='margin:10px 0;'>`;
 
-            let conteoPorMateria = {};
-            let correctasGlobales = 0;
-
-            respuestasEstudiante.forEach(r => {
-                if (!conteoPorMateria[r.materia]) {
-                    conteoPorMateria[r.materia] = { correctas: 0, total: 0 };
-                }
-                conteoPorMateria[r.materia].total++;
-                if (r.correcto) {
-                    conteoPorMateria[r.materia].correctas++;
-                    correctasGlobales++;
-                }
+            bitacoraFinal.forEach(item => {
+                let pct = Math.round((item.aciertos / 15) * 100);
+                desglose.innerHTML += `<p><b>${item.materia}</b> [${item.nivel}]: ${item.aciertos}/15 aciertos calculados (${pct}%)</p>`;
             });
-
-            for (let m in conteoPorMateria) {
-                let porcentaje = ((conteoPorMateria[m].correctas / conteoPorMateria[m].total) * 100).toFixed(1);
-                desglose.innerHTML += `<p style="margin-bottom:8px;"><b>${m}:</b> Identificado un ${porcentaje}% de respuestas correctas acumuladas totales.</p>`;
-            }
-
-            document.getElementById("puntaje-total-global").innerText = 
-                `Total Aciertos Globales: ${correctasGlobales} de ${respuestasEstudiante.length} preguntas respondidas.`;
         }
     </script>
 </body>
 </html>
-
